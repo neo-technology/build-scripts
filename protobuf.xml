@@ -25,12 +25,9 @@
     <echo message="Using ProtoBuf ${protoc}"/>
 
     <property name="main.proto" location="src/main/protobuf"/>
-    <property name="test.proto" location="src/test/proto"/>
 
     <available property="protobuf.has.main.sources"
 	       type="dir" file="${main.proto}"/>
-    <available property="protobuf.has.test.sources"
-	       type="dir" file="${test.proto}"/>
   </target>
 
   <macrodef name="protoc">
@@ -50,17 +47,11 @@
   </macrodef>
   
   <extension-point name="-pre-proto" depends="-protobuf available"/>
-  <extension-point name="-pre-test-proto" depends="-protobuf available"/>
 
   <target name="proto" extensionOf="-pre-build" depends="-pre-proto"
 	  if="protobuf.has.main.sources">
-    <protoc source="${main.proto}" target="${target.dir}/main-proto"/>
-    <appenddir to="main.sources" dir="${target.dir}/main-proto"/>
+    <protoc source="${main.proto}" target="${target.dir}/generated-sources/java"/>
+    <appenddir to="main.sources" dir="${target.dir}/generated-sources/java"/>
   </target>
 
-  <target name="proto-test" extensionOf="-pre-build-test"
-	  depends="-pre-test-proto" if="protobuf.has.test.sources">
-    <protoc source="${test.proto}" target="${target.dir}/test-proto"/>
-    <appenddir to="test.sources" dir="${target.dir}/test-proto"/>
-  </target>
 </project>
