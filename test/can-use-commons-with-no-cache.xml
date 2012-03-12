@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="can-use-commons-with-no-cache"
+      default="can-use-commons-with-no-cache">
+  <target name="can-use-commons-with-no-cache">
+    <subant inheritall="false" failonerror="true">
+      <fileset dir="${basedir}" includes="can-i*.xml"/>
+    </subant>
+  </target>
+</project>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- NOTE: this lib is not tested -->
+<project name="submodules">
+  <target name="-submodule" extensionOf="-post-setup">
+    <subant target="${ant.project.invoked-targets}" inheritall="no">
+      <property name="commons.xml" location="${commons.xml}"/>
+      <fileset dir="${basedir}" includes="*/build.xml"/>
+    </subant>
+  </target>
+
+  <!-- override to not attempt compiling -->
+  <target name="build" depends="-pre-build"/>
+  <target name="build-test" depends="build,-pre-build-test"/>
+</project>

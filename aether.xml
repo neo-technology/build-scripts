@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns:aether="antlib:org.sonatype.aether.ant" name="aether">
+  <sequential>
+    <local name="build"/>
+    <dirname property="build" file="${commons.xml}"/>
+    <condition property="aether.jar" value="${build}/aether.jar">
+      <isset property="commons.xml"/>
+    </condition>
+  </sequential>
+
+  <target name="clean aether">
+    <delete file="${aether.jar}"/>
+  </target>
+
+  <target name="-aether check">
+    <condition property="aether.available">
+      <available file="${aether.jar}" type="file"/>
+    </condition>
+    <local name="message"/>
+    <condition property="message" value="aether available"
+	       else="Will attempt to download pre-built aether">
+      <isset property="aether.available"/>
+    </condition>
+    <echo message="${message}"/>
+  </target>
+
+  <target name="-aether get" depends="-aether check" unless="aether.available">
+    <get src="${commons.parent.uri}/aether.jar"
+	 dest="${aether.jar}" usetimestamp="true" ignoreerrors="true"/>
+    <condition property="aether.available">
+      <available file="${aether.jar}" type="file"/>
+    </condition>
+    <local name="message"/>
+    <condition property="message" value="aether downloaded"
+	       else="Could not download pre-built aether, will build aether">
+      <isset property="aether.available"/>
+    </condition>
+    <echo message="${message}"/>
+  </target>
+
+  <target name="-aether build" depends="-aether get" unless="aether.available">
+    <local name="commit"/><!-- get the latest commit -->
+    <script language="javascript">
+      <![CDATA[
+    	var reader = new java.io.BufferedReader(
+	  new java.io.InputStreamReader(
+	    new java.net.URL(
+	      "https://api.github.com/repos/sonatype/aether-ant-tasks/commits?page=0&per_page=1").openStream()));
+	var data=""; var line;
+	while ((line = reader.readLine()) != null) {
+	  data += line;
+	}
+	project.setProperty("commit",eval("("+data+")")[0]["sha"]);
+      ]]>
+    </script>
+    <local name="build.dir"/><local name="aether.target.dir"/>
+    <dirname property="build.dir" file="${aether.jar}"/>
+    <property name="aether.target.dir" location="${build.dir}/tmp-aether-tmp"/>
+    <mkdir dir="${aether.target.dir}"/>
+    <get src="https://github.com/sonatype/aether-ant-tasks/zipball/${commit}"
+         dest="${build.dir}/aether.zip"/>
+    <unzip src="${build.dir}/aether.zip" dest="${aether.target.dir}"/>
+    <local name="aether.unpack.dir"/>
+    <pathconvert property="aether.unpack.dir">
+      <dirset dir="${aether.target.dir}"
+	      includes="sonatype-aether-ant-tasks-*"/>
+    </pathconvert>
+    <local name="mvn.res"/>
+    <exec executable="mvn" dir="${aether.unpack.dir}" resultproperty="mvn.res"
+	  failifexecutionfails="no" failonerror="no">
+      <arg value="clean"/>
+      <arg value="package"/>
+      <arg value="dependency:copy-dependencies"/>
+    </exec>
+    <local name="mvn.fail"/>
+    <condition property="mvn.fail">
+      <or>
+	<not><isset property="mvn.res"/></not>
+	<isfailure code="${mvn.res}"/>
+      </or>
+    </condition>
+    <fail if="mvn.fail" message="Failed to bootstrap aether"/>
+    <jar jarfile="${aether.jar}" filesetmanifest="merge">
+      <zipgroupfileset dir="${aether.unpack.dir}/target"
+		       includes="aether-ant-tasks-*-uber.jar"/>
+      <manifest>
+	<attribute name="GitHub-Commit-SHA" value="${commit}"/>
+      </manifest>
+    </jar>
+    <!--move tofile="${aether.jar}">
+      <fileset dir="${aether.unpack.dir}/target">
+        <include name="aether-ant-tasks-*-uber.jar"/>
+      </fileset>
+    </move-->
+    <delete dir="${aether.target.dir}"/>
+    <delete file="${build.dir}/aether.zip"/>
+  </target>
+
+  <target name="-aether setup" depends="-aether build" extensionOf="-pre-setup">
+    <taskdef uri="antlib:org.sonatype.aether.ant"
+             resource="org/sonatype/aether/ant/antlib.xml">
+      <classpath location="${aether.jar}"/>
+    </taskdef>
+    <property name="pom.xml" value="pom.xml"/>
+    <aether:pom file="${pom.xml}" id="pom"/>
+    <property name="project.group" value="${pom.groupId}"/>
+    <property name="project.name" value="${pom.artifactId}"/>
+    <property name="project.version" value="${pom.version}"/>
+  </target>
+
+  <target name="-aether dependencies" depends="-aether setup"
+	  extensionOf="-pre-build">
+    <aether:resolve>
+      <aether:dependencies pomRef="pom"/>
+      <aether:path refid="build.classpath" classpath="compile"/>
+      <aether:path refid="test.classpath" classpath="test"/>
+    </aether:resolve>
+  </target>
+
+  <target name="package" extensionOf="complete" depends="test">
+    <aether:artifacts id="packaging">
+      <artifact file="${main.jar}"/>
+      <artifact file="${main.src.jar}" classifier="sources"/>
+      <artifact file="${test.jar}" classifier="tests"/>
+    </aether:artifacts>
+  </target>
+
+  <target name="install" depends="package">
+    <aether:install artifactsref="packaging"/>
+  </target>
+
+  <!--target name="deploy" depends="package">
+    <aether:deploy artifactsref="packaging">
+      <remoteRepo id="dist" url="file:///${build.dir}/dist-repo"/>
+    </aether:deploy>
+  </target-->
+</project>

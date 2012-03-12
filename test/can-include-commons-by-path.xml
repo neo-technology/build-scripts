@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="can-include-commons-by-path"
+      default="can-include-commons-by-path">
+  <include file="../commons.xml"/>
+  <using lib="test/lib/success"/>
+  <target name="can-include-commons-by-path" depends="success.success"/>
+</project>

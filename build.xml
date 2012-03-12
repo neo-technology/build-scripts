@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="build-scripts" default="complete">
+  <target name="help">
+    <local name="readme"/>
+    <loadfile property="readme" srcFile="README"/>
+    <echo message="${readme}"/>
+    <echo>
+      This build.xml file is largely unimportant,
+      it exists for the purpose of testing the build scripts.
+    </echo>
+  </target>
+
+  <property name="rebuild.aether" value="true"/>
+
+  <target name="clean">
+    <delete><fileset dir="test" includes="*.jar"/></delete>
+  </target>
+
+  <target name="test" depends="help,clean,-reuse aether">
+    <echo message="running test cases"/>
+    <subant inheritall="false" failonerror="true">
+      <property name="commons.parent.uri" value="http://localhost"/>
+      <property name="commons.xml" location="commons.xml"/>
+      <property name="aether.jar" location="test/aether.jar"/>
+      <property name="shavenmaven.jar" location="test/shavenmaven.jar"/>
+      <fileset dir="test" includes="*.xml"/>
+      <fileset dir="test" includes="*/build.xml"/>
+    </subant>
+  </target>
+
+  <macrodef name="extract-commit-sha">
+    <attribute name="jar"/>
+    <attribute name="prefix"/>
+    <sequential>
+      <loadproperties>
+	<zipentry zipfile="@{jar}" name="META-INF/MANIFEST.MF"/>
+	<filterchain>
+	  <linecontains>
+	    <contains value="GitHub-Commit-SHA:"/>
+	  </linecontains>
+	  <prefixlines prefix="@{prefix}."/>
+	</filterchain>
+      </loadproperties>
+    </sequential>
+  </macrodef>
+
+  <target name="-reuse aether" depends="clean" unless="${rebuild.aether}">
+    <copy file="aether.jar" tofile="test/aether.jar"/>
+  </target>
+
+  <target name="-check new aether" depends="test">
+    <local name="old.GitHub-Commit-SHA"/><local name="new.GitHub-Commit-SHA"/>
+    <extract-commit-sha jar="aether.jar" prefix="old"/>
+    <extract-commit-sha jar="test/aether.jar" prefix="new"/>
+    <condition property="old.aether">
+      <not><equals arg1="${old.GitHub-Commit-SHA}"
+                   arg2="${new.GitHub-Commit-SHA}"/></not>
+    </condition>
+  </target>
+
+  <target name="-replace aether" depends="-check new aether" if="old.aether">
+    <copy file="test/aether.jar" tofile="aether.jar"/>
+  </target>
+
+  <target name="complete" depends="-replace aether">
+    <echo message="done."/>
+  </target>
+
+</project>
