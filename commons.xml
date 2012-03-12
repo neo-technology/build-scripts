@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="commons" xmlns:commons="antlib:com.neotechnology.build-scripts">
   <property name="commons.parent.uri"
-            value="https://raw.github.com/neo-technology/build/master"/>
+            value="https://raw.github.com/neo-technology/build-scripts/master/"/>
   <script language="javascript">
     <![CDATA[
     var commonsXML = project.getProperty("ant.file.commons");
