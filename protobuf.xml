@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="protobuf">
+  <property name="protoc.version" value="2.4.1"/>
   <target name="-protobuf available" extensionOf="-pre-setup">
     <local name="protoc"/>
     <exec executable="protoc" failifexecutionfails="false" outputproperty="protoc">
@@ -14,6 +15,11 @@
     </condition>
     <property name="install.it" value="Unable to offer installation advice for your platform."/>
     <fail unless="protoc" message="ProtoBuf not installed. ${install.it}"/>
+    <local name="correct.version"/>
+    <condition property="correct.version">
+	  <equals arg1="${protoc}" arg2="libprotoc ${protoc.version}"/>
+	</condition>
+	<fail unless="correct.version" message="Incorrect protoc version. Expected '${protoc}', 'libprotoc ${protoc.version}'"/>
     <echo message="Using ProtoBuf ${protoc}"/>
 
     <property name="main.proto" location="src/main/protobuf"/>
