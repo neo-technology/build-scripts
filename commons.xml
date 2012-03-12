@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="commons" xmlns:commons="antlib:com.neotechnology.build-scripts">
+<project name="commons">
   <property name="commons.parent.uri"
             value="https://raw.github.com/neo-technology/build-scripts/master"/>
   <script language="javascript">
     <![CDATA[
     var commonsXML = project.getProperty("ant.file.commons");
-    if (project.getProperty("ant.file.type.commons") === "uri") {
+    if (project.getProperty("ant.file.type.commons") === "url") {
        if (commonsXML.substring(0,5) === "file:") {
          project.setNewProperty("commons.xml", commonsXML);
          commonsXML = commonsXML.substring(5);
-       } else {
-         project.setProperty("commons.parent.uri",
-             commonsXML.substring(0, commonsXML.lastIndexOf('/')));
        }
     } else {
       project.setNewProperty("commons.xml", commonsXML);
@@ -71,17 +68,6 @@
     <path id="test.classpath"><path refid="runtime.classpath"/></path>
   </target>
 
-  <scriptdef name="parenturi" language="javascript"
-             uri="antlib:com.neotechnology.build-scripts">
-    <attribute name="property"/>
-    <attribute name="uri"/>
-    <![CDATA[
-      var uri = attributes.get("uri");
-      uri = uri.substring(0, uri.lastIndexOf('/'));
-      project.setNewProperty(attributes.get("property"), uri);
-    ]]>
-  </scriptdef>
-
   <macrodef name="using">
     <attribute name="lib"/>
 
@@ -91,15 +77,8 @@
       <condition property="cache.root" value="${cache.root.suggestion}">
         <isset property="commons.xml"/>
       </condition>
-      <local name="parent"/><local name="remote.root"/>
-      <commons:parenturi property="parent" uri="${ant.file.commons}"/>
-      <condition property="remote.root" value="${parent}"
-                 else="${commons.parent.uri}">
-        <equals arg1="url" arg2="${ant.file.type.commons}"
-                casesensitive="false"/>
-      </condition>
       <local name="download.uri"/><local name="target.file"/>
-      <condition property="download.uri" value="${remote.root}/@{lib}.xml"
+      <condition property="download.uri" value="${commons.parent.uri}/@{lib}.xml"
                  else=""><!-- empty to not download -->
         <isset property="cache.root"/>
       </condition>
