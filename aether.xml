@@ -106,11 +106,16 @@
     <property name="project.group" value="${pom.groupId}"/>
     <property name="project.name" value="${pom.artifactId}"/>
     <property name="project.version" value="${pom.version}"/>
+
+    <aether:remoterepo id="neo4j"
+            url="http://m2.neo4j.org/content/repositories/everything"
+	    releases="true" snapshots="true" checksums="fail"/>
   </target>
 
   <target name="-aether dependencies" depends="-aether setup"
 	  extensionOf="-pre-build">
     <aether:resolve>
+      <aether:remoterepo refid="neo4j"/>
       <aether:dependencies pomRef="pom"/>
       <aether:path refid="build.classpath" classpath="compile"/>
       <aether:path refid="test.classpath" classpath="test"/>

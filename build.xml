@@ -2,7 +2,7 @@
 <project name="build-scripts" default="complete">
   <target name="help">
     <local name="readme"/>
-    <loadfile property="readme" srcFile="README"/>
+    <loadfile property="readme" srcFile="README.md"/>
     <echo message="${readme}"/>
     <echo>
       This build.xml file is largely unimportant,

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="commons" xmlns:commons="antlib:com.neotechnology.build-scripts">
   <property name="commons.parent.uri"
-            value="https://raw.github.com/neo-technology/build-scripts/master/"/>
+            value="https://raw.github.com/neo-technology/build-scripts/master"/>
   <script language="javascript">
     <![CDATA[
     var commonsXML = project.getProperty("ant.file.commons");
@@ -24,7 +24,7 @@
     <local name="parent.dir"/>
     <dirname property="parent.dir" file="${commons.xml}"/>
     <mkdir dir="${parent.dir}"/>
-    <get src="${commons.parent.uri}" dest="${commons.xml}"
+    <get src="${commons.parent.uri}/commons.xml" dest="${commons.xml}"
          skipexisting="yes"/>
   </target>
 
