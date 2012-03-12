@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="protobuf">
+	
+	<!-- <target name="-set.protoc.path.mac" if="is.mac">
+		<property name="protoc" value="/usr/local/bin/protoc"/>
+		<available file="${protoc}" property="protoc.present"/>
+	</target>
+
+	<target name="-set.protoc.path.linux" if="is.linux">
+		<property name="protoc" value="/usr/bin/protoc"/>
+		<available file="${protoc}" property="protoc.present"/>
+	</target>
+
+	<target name="-protoc.installation.advice" unless="protoc.present">
+		<fail message="Install protocol buffers to build this module."/>
+	</target> -->
+	
+	
   <target name="-protobuf available" extensionOf="-pre-setup">
     <local name="protoc"/>
     <exec executable="protoc" failifexecutionfails="no" outputproperty="protoc">
@@ -8,7 +24,7 @@
     <fail unless="protoc" message="ProtoBuf not installed"/>
     <echo message="Using ProtoBuf ${protoc}"/>
 
-    <property name="main.proto" location="src/main/proto"/>
+    <property name="main.proto" location="src/main/protobuf"/>
     <property name="test.proto" location="src/test/proto"/>
 
     <available property="protobuf.has.main.sources"
