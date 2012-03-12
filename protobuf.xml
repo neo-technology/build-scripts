@@ -19,7 +19,7 @@
     <condition property="correct.version">
 	  <equals arg1="${protoc}" arg2="libprotoc ${protoc.version}"/>
 	</condition>
-	<fail unless="correct.version" message="Incorrect protoc version. Expected '${protoc}', 'libprotoc ${protoc.version}'"/>
+	<fail unless="correct.version" message="Incorrect protoc version. Expected 'libprotoc ${protoc.version}', got '${protoc}'"/>
     <echo message="Using ProtoBuf ${protoc}"/>
 
     <property name="main.proto" location="src/main/protobuf"/>
