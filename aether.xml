@@ -138,14 +138,29 @@
 
   <target name="-aether dependencies" depends="-aether setup"
           extensionOf="-pre-build">
+    <path id="transitive.build.classpath"/>
+    <path id="transitive.test.classpath"/>
     <aether:resolve>
       <aether:remoterepo refid="neo4j"/>
       <aether:dependencies pomRef="pom"/>
+      <aether:path refid="transitive.build.classpath" classpath="compile"/>
       <aether:path transitive="false"
 		   refid="thirdparty.compile.classpath" classpath="compile"/>
+      <aether:path refid="transitive.test.classpath" classpath="test"/>
       <aether:path transitive="false"
 		   refid="thirdparty.test.classpath" classpath="test"/>
     </aether:resolve>
+    <local name="build.ok"/><local name="test.ok"/>
+    <condition property="build.ok">
+      <equals arg1="${toString:transitive.build.classpath}"
+	      arg2="${toString:thirdparty.compile.classpath}"/>
+    </condition>
+    <fail unless="build.ok" message="Transitive build.classpath=[${toString:transitive.build.classpath}], build.classpath=[${toString:thirdparty.build.classpath}]"/>
+    <condition property="test.ok">
+      <equals arg1="${toString:transitive.test.classpath}"
+	      arg2="${toString:thirdparty.test.classpath}"/>
+    </condition>
+    <fail unless="test.ok" message="Transitive test.classpath=[${toString:transtitive.test.classpath}], test.classpath=[${toString:thirdparty.test.classpath}]"/>
   </target>
 
   <target name="package" extensionOf="complete" depends="test">
