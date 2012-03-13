@@ -18,7 +18,7 @@
     </condition>
     <local name="message"/>
     <condition property="message" value="aether available"
-	       else="Will attempt to download pre-built aether">
+               else="Will attempt to download pre-built aether">
       <isset property="aether.available"/>
     </condition>
     <echo message="${message}"/>
@@ -26,48 +26,77 @@
 
   <target name="-aether get" depends="-aether check" unless="aether.available">
     <get src="${commons.parent.uri}/aether.jar"
-	 dest="${aether.jar}" usetimestamp="true" ignoreerrors="true"/>
+         dest="${aether.jar}" usetimestamp="true" ignoreerrors="true"/>
     <condition property="aether.available">
       <available file="${aether.jar}" type="file"/>
     </condition>
     <local name="message"/>
     <condition property="message" value="aether downloaded"
-	       else="Could not download pre-built aether, will build aether">
+               else="Could not download pre-built aether, will build aether">
       <isset property="aether.available"/>
     </condition>
     <echo message="${message}"/>
   </target>
 
   <target name="-aether build" depends="-aether get" unless="aether.available">
+    <local name="gh.org"/><local name="gh.repo"/>
+    <property name="gh.org" value="neo-technology"/>
+    <property name="gh.repo" value="aether-ant-tasks"/>
     <local name="commit"/><!-- get the latest commit -->
     <script language="javascript">
       <![CDATA[
-    	var reader = new java.io.BufferedReader(
-	  new java.io.InputStreamReader(
-	    new java.net.URL(
-	      "https://api.github.com/repos/sonatype/aether-ant-tasks/commits?page=0&per_page=1").openStream()));
-	var data=""; var line;
-	while ((line = reader.readLine()) != null) {
-	  data += line;
-	}
-	project.setProperty("commit",eval("("+data+")")[0]["sha"]);
+            var reader = new java.io.BufferedReader(
+          new java.io.InputStreamReader(
+            new java.net.URL(
+              "https://api.github.com/repos/" + project.getProperty("gh.org")
+              + "/" + project.getProperty("gh.repo")
+              + "/commits?page=0&per_page=1").openStream()));
+        var data=""; var line;
+        while ((line = reader.readLine()) != null) {
+          data += line;
+        }
+        project.setProperty("commit",eval("("+data+")")[0]["sha"]);
       ]]>
     </script>
     <local name="build.dir"/><local name="aether.target.dir"/>
     <dirname property="build.dir" file="${aether.jar}"/>
     <property name="aether.target.dir" location="${build.dir}/tmp-aether-tmp"/>
     <mkdir dir="${aether.target.dir}"/>
-    <get src="https://github.com/sonatype/aether-ant-tasks/zipball/${commit}"
+    <get src="https://github.com/${gh.org}/${gh.repo}/zipball/${commit}"
          dest="${build.dir}/aether.zip"/>
     <unzip src="${build.dir}/aether.zip" dest="${aether.target.dir}"/>
     <local name="aether.unpack.dir"/>
     <pathconvert property="aether.unpack.dir">
       <dirset dir="${aether.target.dir}"
-	      includes="sonatype-aether-ant-tasks-*"/>
+              includes="*-aether-ant-*"/>
     </pathconvert>
+    <local name="mvn.settings.xml"/>
+    <property name="mvn.settings.xml"
+	      location="${aether.target.dir}/settings.xml"/>
+    <echo file="${mvn.settings.xml}"><![CDATA[
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+			      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <profiles>
+    <profile>
+      <activation><activeByDefault>true</activeByDefault></activation>
+      <repositories>
+	<repository>
+	  <id>sonatype-nexus-snapshots</id>
+	  <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+	  <releases><enabled>false</enabled></releases>
+	  <snapshots><enabled>true</enabled></snapshots>
+	</repository>
+      </repositories>
+    </profile>
+  </profiles>
+</settings>
+]]></echo>
     <local name="mvn.res"/>
     <exec executable="mvn" dir="${aether.unpack.dir}" resultproperty="mvn.res"
-	  failifexecutionfails="no" failonerror="no">
+          failifexecutionfails="no" failonerror="no">
+      <arg value="--settings"/><arg value="${mvn.settings.xml}"/>
       <arg value="clean"/>
       <arg value="package"/>
       <arg value="dependency:copy-dependencies"/>
@@ -75,23 +104,18 @@
     <local name="mvn.fail"/>
     <condition property="mvn.fail">
       <or>
-	<not><isset property="mvn.res"/></not>
-	<isfailure code="${mvn.res}"/>
+        <not><isset property="mvn.res"/></not>
+        <isfailure code="${mvn.res}"/>
       </or>
     </condition>
     <fail if="mvn.fail" message="Failed to bootstrap aether"/>
     <jar jarfile="${aether.jar}" filesetmanifest="merge">
       <zipgroupfileset dir="${aether.unpack.dir}/target"
-		       includes="aether-ant-tasks-*-uber.jar"/>
+                       includes="aether-ant-tasks-*-uber.jar"/>
       <manifest>
-	<attribute name="GitHub-Commit-SHA" value="${commit}"/>
+        <attribute name="GitHub-Commit-SHA" value="${commit}"/>
       </manifest>
     </jar>
-    <!--move tofile="${aether.jar}">
-      <fileset dir="${aether.unpack.dir}/target">
-        <include name="aether-ant-tasks-*-uber.jar"/>
-      </fileset>
-    </move-->
     <delete dir="${aether.target.dir}"/>
     <delete file="${build.dir}/aether.zip"/>
   </target>
@@ -109,16 +133,18 @@
 
     <aether:remoterepo id="neo4j"
             url="http://m2.neo4j.org/content/repositories/everything"
-	    releases="true" snapshots="true" checksums="fail"/>
+            releases="true" snapshots="true" checksums="fail"/>
   </target>
 
   <target name="-aether dependencies" depends="-aether setup"
-	  extensionOf="-pre-build">
+          extensionOf="-pre-build">
     <aether:resolve>
       <aether:remoterepo refid="neo4j"/>
       <aether:dependencies pomRef="pom"/>
-      <aether:path refid="build.classpath" classpath="compile"/>
-      <aether:path refid="test.classpath" classpath="test"/>
+      <aether:path transitive="false"
+		   refid="build.classpath" classpath="compile"/>
+      <aether:path transitive="false"
+		   refid="test.classpath" classpath="test"/>
     </aether:resolve>
   </target>
 
