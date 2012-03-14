@@ -25,7 +25,11 @@
          skipexisting="yes"/>
   </target>
 
-  <target name="setup" depends="-pre-setup">
+  <target name="define-module-paths">
+    <path id="internal.module.classpath" />
+  </target>
+  
+  <target name="setup" depends="define-module-paths, -pre-setup">
     <!-- Define properties required by common build, unless already defined -->
 
     <property name="compilation.target" value="1.5"/>
@@ -63,9 +67,14 @@
     <!-- create target directories -->
     <mkdir dir="${target.dir}"/>
     <!-- define classpaths -->
-    <path id="build.classpath"/>
+    <path id="thirdparty.compile.classpath"/>
+    <path id="build.classpath">
+      <path refid="thirdparty.compile.classpath"/>
+      <path refid="internal.module.classpath"/>
+    </path>
     <path id="runtime.classpath"><path refid="build.classpath"/></path>
-    <path id="test.classpath"><path refid="runtime.classpath"/></path>
+    <path id="thirdparty.test.classpath"><path refid="runtime.classpath"/></path>
+    <path id="test.classpath"><path refid="thirdparty.test.classpath"/></path>
   </target>
 
   <macrodef name="using">

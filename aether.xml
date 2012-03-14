@@ -142,9 +142,9 @@
       <aether:remoterepo refid="neo4j"/>
       <aether:dependencies pomRef="pom"/>
       <aether:path transitive="false"
-		   refid="build.classpath" classpath="compile"/>
+		   refid="thirdparty.compile.classpath" classpath="compile"/>
       <aether:path transitive="false"
-		   refid="test.classpath" classpath="test"/>
+		   refid="thirdparty.test.classpath" classpath="test"/>
     </aether:resolve>
   </target>
 

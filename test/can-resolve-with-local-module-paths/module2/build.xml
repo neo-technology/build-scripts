@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="can-resolve-with-local-module-paths" default="test">
+  <!--<property name="commons.xml" location="lib/build/commons.xml"/>-->
+  <!--<available file="${commons.xml}" property="commons.url"-->
+             <!--value="file:${commons.xml}"/>-->
+  <!--<property name="commons.original" location="../../../commons.xml"/>-->
+  <!--<property name="commons.url" value="file:${commons.original}"/>-->
+  <!--<import><url url="${commons.url}"/></import>-->
+
+  <import file="../../../commons.xml" />
+  <import file="../../../aether.xml" />
+
+  <target name="define-module-paths">
+    <path id="internal.module.classpath">
+      <pathelement location="../module1/target/neo4j-module1-1.0-SNAPSHOT.jar" />
+    </path>
+  </target>
+
+  <target name="clean-first" depends="clean" extensionOf="-pre-build"/>
+
+</project>
