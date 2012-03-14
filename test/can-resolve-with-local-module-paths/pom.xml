@@ -9,5 +9,11 @@
     <module>module1</module>
     <module>module2</module>
   </modules>
-  
+
+  <profiles>
+    <profile>
+      <id>module-dependency-for-ide-import</id>
+    </profile>
+  </profiles>
+
 </project>
