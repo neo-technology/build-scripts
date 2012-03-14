@@ -38,12 +38,10 @@
     <property name="project.name" value="${ant.project.name}"/>
     <property name="project.version" value="SNAPSHOT"/>
     <!-- source directories -->
-    <path id="main.sources">
-      <pathelement location="src/main/java"/>
-    </path>
-    <path id="test.sources">
-      <pathelement location="src/test/java"/>
-    </path>
+    <property name="source.main.java" value="src/main/java" />
+    <property name="generated.main.java" value="target/generated-sources/java" />
+    <property name="source.test.java" value="src/test/java" />
+    <property name="generated.test.java" value="target/generated-test-sources/java" />
     <!-- target directories -->
     <property name="target.dir" location="target"/>
     <property name="test.reports" location="${target.dir}/test-reports"/>
@@ -127,6 +125,7 @@
     <attribute name="jar"/>
     <attribute name="srcjar"/>
     <attribute name="source"/>
+    <attribute name="genSource"/>
     <element name="class-path"/>
     <element name="manifest-data" optional="yes"/>
     <element name="include-files" optional="yes"/>
@@ -135,16 +134,14 @@
       <local name="target.tmp"/><local name="compilation.failure"/>
       <property name="target.tmp" location="@{jar}-classes"/>
       <mkdir dir="${target.tmp}"/>
+      <mkdir dir="@{source}"/>
+      <mkdir dir="@{genSource}"/>
 
       <javac failonerror="false" errorProperty="compilation.failure"
              destdir="${target.tmp}" debug="on" debuglevel="lines,vars,source"
              target="${compilation.target}" includeantruntime="false">
-	<src>
-	  <restrict xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors">
-	    <path refid="@{source}"/>
-	    <rsel:type type="dir"/>
-	  </restrict>
-	</src>
+        <src path="@{source}"/>
+        <src path="@{genSource}"/>
         <classpath><class-path/></classpath>
       </javac>
 
@@ -155,11 +152,8 @@
           <filename name="LICENSE.txt"/><!-- license for this project -->
           <filename name="NOTICE.txt"/><!-- licenses for dependencies -->
         </zipfileset>
-        <restrict xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors">
-	  <!-- FIXME: this doesn't select files under this path -->
-          <path refid="@{source}"/>
-          <rsel:not><rsel:name name="**/*.java"/></rsel:not>
-        </restrict>
+        <fileset dir="@{source}" excludes="**/*.java"/>
+        <fileset dir="@{genSource}" excludes="**/*.java"/>
         <resources>
           <include-files/>
         </resources>
@@ -176,17 +170,14 @@
       </jar>
 
       <jar jarfile="@{srcjar}">
-	<zipfileset dir="${basedir}" prefix="META-INF/">
-	  <filename name="README.*"/>
-	  <filename name="LICENSE.txt"/><!-- license for this project -->
-	  <filename name="NOTICE.txt"/><!-- licenses for dependencies -->
-	</zipfileset>
-	<restrict xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors">
-	  <!-- FIXME: this doesn't select files under this path -->
-	  <path refid="@{source}"/>
-	</restrict>
+        <zipfileset dir="${basedir}" prefix="META-INF/">
+          <filename name="README.*"/>
+          <filename name="LICENSE.txt"/><!-- license for this project -->
+	        <filename name="NOTICE.txt"/><!-- licenses for dependencies -->
+	      </zipfileset>
+        <fileset dir="@{source}"/>
+        <fileset dir="@{genSource}"/>
       </jar>
-
       <delete dir="${target.tmp}"/>
       <fail message="compilation failed" if="${compilation.failure}"/>
     </sequential>
@@ -229,7 +220,7 @@
   <extension-point name="-pre-build" depends="-post-setup"/>
   
   <target name="build" depends="-pre-build">
-    <compile jar="${main.jar}" srcjar="${main.src.jar}" source="main.sources">
+    <compile jar="${main.jar}" srcjar="${main.src.jar}" source="${source.main.java}" genSource="${generated.main.java}">
       <class-path>
         <path refid="build.classpath"/>
       </class-path>
@@ -239,7 +230,7 @@
   <extension-point name="-pre-build-test" depends="build"/>
 
   <target name="build-test" depends="build,-pre-build-test">
-    <compile jar="${test.jar}" srcjar="${test.src.jar}" source="test.sources">
+    <compile jar="${test.jar}" srcjar="${test.src.jar}" source="${source.test.java}" genSource="${generated.test.java}">
       <class-path>
         <path refid="test.classpath"/>
         <pathelement location="${main.jar}"/>

@@ -48,8 +48,8 @@
 
   <target name="proto" extensionOf="-pre-build" depends="-pre-proto"
 	  if="protobuf.has.main.sources">
-    <protoc source="${main.proto}" target="${target.dir}/generated-sources/java"/>
-    <appenddir to="main.sources" dir="${target.dir}/generated-sources/java"/>
+	  <mkdir dir="${generated.main.java}"/>
+    <protoc source="${main.proto}" target="${generated.main.java}"/>
   </target>
 
 </project>
