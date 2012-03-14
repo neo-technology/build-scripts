@@ -73,8 +73,11 @@
       <path refid="internal.module.classpath"/>
     </path>
     <path id="runtime.classpath"><path refid="build.classpath"/></path>
-    <path id="thirdparty.test.classpath"><path refid="runtime.classpath"/></path>
-    <path id="test.classpath"><path refid="thirdparty.test.classpath"/></path>
+    <path id="thirdparty.test.classpath"/>
+    <path id="test.classpath">
+      <path refid="thirdparty.test.classpath"/>
+      <path refid="runtime.classpath"/>
+    </path>
   </target>
 
   <macrodef name="using">
