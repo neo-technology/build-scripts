@@ -140,13 +140,17 @@
           extensionOf="-pre-build">
     <path id="transitive.main.classpath"/>
     <path id="transitive.test.classpath"/>
-    <aether:resolve>
+    <aether:resolve transitive="false">
       <aether:remoterepo refid="neo4j"/>
       <aether:dependencies pomRef="pom"/>
-      <aether:path refid="transitive.main.classpath" classpath="compile" transitive="true"/>
-      <aether:path refid="thirdparty.main.classpath" classpath="compile" transitive="false"/>
-      <aether:path refid="transitive.test.classpath" classpath="test" transitive="true"/>
-      <aether:path refid="thirdparty.test.classpath" classpath="test" transitive="false"/>
+      <aether:path refid="thirdparty.main.classpath" classpath="compile"/>
+      <aether:path refid="thirdparty.test.classpath" classpath="test"/>
+    </aether:resolve>
+    <aether:resolve transitive="true">
+      <aether:remoterepo refid="neo4j"/>
+      <aether:dependencies pomRef="pom"/>
+      <aether:path refid="transitive.main.classpath" classpath="compile"/>
+      <aether:path refid="transitive.test.classpath" classpath="test"/>
     </aether:resolve>
     <local name="main.ok"/><local name="test.ok"/>
     <condition property="main.ok">
@@ -158,7 +162,7 @@
       <equals arg1="${toString:transitive.test.classpath}"
               arg2="${toString:thirdparty.test.classpath}"/>
     </condition>
-    <fail unless="test.ok" message="Transitive test.classpath=[${toString:transtitive.test.classpath}], test.classpath=[${toString:thirdparty.test.classpath}]"/>
+    <fail unless="test.ok" message="Transitive test.classpath=[${toString:transitive.test.classpath}], test.classpath=[${toString:thirdparty.test.classpath}]"/>
   </target>
 
   <target name="package" extensionOf="complete" depends="test">
