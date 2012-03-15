@@ -6,32 +6,22 @@
     <condition property="aether.jar" value="${build}/aether.jar">
       <isset property="commons.xml"/>
     </condition>
+    <fail unless="aether.jar"
+	  message="Could not find location to put aether.jar"/>
   </sequential>
 
   <target name="clean aether">
     <delete file="${aether.jar}"/>
   </target>
 
-  <target name="-aether check">
-    <condition property="aether.available">
-      <available file="${aether.jar}" type="file"/>
-    </condition>
-    <local name="message"/>
-    <condition property="message" value="aether available"
-               else="Will attempt to download pre-built aether">
-      <isset property="aether.available"/>
-    </condition>
-    <echo message="${message}"/>
-  </target>
-
-  <target name="-aether get" depends="-aether check" unless="aether.available">
+  <target name="-aether get">
     <get src="${commons.parent.uri}/aether.jar"
          dest="${aether.jar}" usetimestamp="true" ignoreerrors="true"/>
     <condition property="aether.available">
       <available file="${aether.jar}" type="file"/>
     </condition>
     <local name="message"/>
-    <condition property="message" value="aether downloaded"
+    <condition property="message" value="aether found"
                else="Could not download pre-built aether, will build aether">
       <isset property="aether.available"/>
     </condition>
@@ -45,17 +35,17 @@
     <local name="commit"/><!-- get the latest commit -->
     <script language="javascript">
       <![CDATA[
-            var reader = new java.io.BufferedReader(
-          new java.io.InputStreamReader(
-            new java.net.URL(
-              "https://api.github.com/repos/" + project.getProperty("gh.org")
-              + "/" + project.getProperty("gh.repo")
-              + "/commits?page=0&per_page=1").openStream()));
-        var data=""; var line;
-        while ((line = reader.readLine()) != null) {
-          data += line;
-        }
-        project.setProperty("commit",eval("("+data+")")[0]["sha"]);
+      var reader = new java.io.BufferedReader(
+      new java.io.InputStreamReader(
+        new java.net.URL(
+          "https://api.github.com/repos/" + project.getProperty("gh.org")
+          + "/" + project.getProperty("gh.repo")
+          + "/commits?page=0&per_page=1").openStream()));
+      var data=""; var line;
+      while ((line = reader.readLine()) != null) {
+        data += line;
+      }
+      project.setProperty("commit",eval("("+data+")")[0]["sha"]);
       ]]>
     </script>
     <local name="build.dir"/><local name="aether.target.dir"/>
@@ -157,13 +147,27 @@
       <equals arg1="${toString:transitive.main.classpath}"
               arg2="${toString:thirdparty.main.classpath}"/>
     </condition>
-    <fail unless="main.ok" message="Transitive main.classpath=[${toString:transitive.main.classpath}], main.classpath=[${toString:thirdparty.main.classpath}]"/>
-    <condition property="test.ok">
-      <equals arg1="${toString:transitive.test.classpath}"
-              arg2="${toString:thirdparty.test.classpath}"/>
-    </condition>
-    <fail unless="test.ok" message="Transitive test.classpath=[${toString:transitive.test.classpath}], test.classpath=[${toString:thirdparty.test.classpath}]"/>
+    <must-be-equal-paths path1="transitive.main.classpath"
+			 path2="thirdparty.main.classpath"/>
+    <must-be-equal-paths path1="transitive.test.classpath"
+			 path2="thirdparty.test.classpath"/>
   </target>
+
+  <macrodef name="must-be-equal-paths">
+    <attribute name="path1"/>
+    <attribute name="path2"/>
+    <sequential>
+      <local name="sep"/><local name="ok"/>
+      <local name="one"/><local name="two"/>
+      <property name="sep" value="${line.separator}  "/>
+      <pathconvert property="one" pathsep="${sep}" refid="@{path1}"/>
+      <pathconvert property="two" pathsep="${sep}" refid="@{path2}"/>
+      <condition property="ok">
+	<equals arg1="${one}" arg2="${two}"/>
+      </condition>
+      <fail unless="ok" message="Path do not match${line.separator}= @{path1} =${sep}${one}${line.separator}= @{path2} =${sep}${two}"/>
+    </sequential>
+  </macrodef>
 
   <target name="package" extensionOf="complete" depends="test">
     <aether:artifacts id="packaging">
@@ -173,7 +177,8 @@
     </aether:artifacts>
   </target>
 
-  <target name="install" depends="package">
+  <target name="install" depends="package" if="project.install.target">
+    <aether:localrepo dir="${project.install.target}"/>
     <aether:install artifactsref="packaging"/>
   </target>
 
