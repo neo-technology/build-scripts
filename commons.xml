@@ -65,12 +65,12 @@
     <!-- create target directories -->
     <mkdir dir="${target.dir}"/>
     <!-- define classpaths -->
-    <path id="thirdparty.compile.classpath"/>
-    <path id="build.classpath">
-      <path refid="thirdparty.compile.classpath"/>
+    <path id="thirdparty.main.classpath"/>
+    <path id="main.classpath">
+      <path refid="thirdparty.main.classpath"/>
       <path refid="internal.module.classpath"/>
     </path>
-    <path id="runtime.classpath"><path refid="build.classpath"/></path>
+    <path id="runtime.classpath"><path refid="main.classpath"/></path>
     <path id="thirdparty.test.classpath"/>
     <path id="test.classpath">
       <path refid="thirdparty.test.classpath"/>
@@ -115,8 +115,8 @@
       <local name="path"/>
       <pathconvert refid="@{to}" property="path"/>
       <path id="@{to}">
-	<pathelement path="${path}"/>
-	<pathelement location="@{dir}"/>
+        <pathelement path="${path}"/>
+        <pathelement location="@{dir}"/>
       </path>
     </sequential>
   </macrodef>
@@ -193,7 +193,7 @@
       <junit printsummary="no" fork="yes" forkmode="once"
              failureproperty="failure">
         <classpath>
-	  <class-path/>
+          <class-path/>
           <pathelement location="@{jar}"/>
         </classpath>
         <formatter type="xml"/>
@@ -222,7 +222,7 @@
   <target name="build" depends="-pre-build">
     <compile jar="${main.jar}" srcjar="${main.src.jar}" source="${source.main.java}" genSource="${generated.main.java}">
       <class-path>
-        <path refid="build.classpath"/>
+        <path refid="main.classpath"/>
       </class-path>
     </compile>
   </target>
