@@ -7,4 +7,8 @@
 
   <using lib="aether"/>
 
+  <target name="-ensure-empty-fake-target-classes-dir" extensionOf="-pre-setup">
+    <mkdir dir="target/classes"/>
+  </target>
+
 </project>
