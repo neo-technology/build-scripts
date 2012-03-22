@@ -10,18 +10,57 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ProjectLicenseHeaderCheckerFunctionalTest
 {
+
+    private final File targetDir = new File("target");
+    private final String yearLine = "Copyright (C) 2012 Neo Technology";
+    private final String rightsLine = "All rights reserved";
+
+    @Test
+    public void shouldPassWhenProcessingJavaFilesWithGoodLicenseHeaders() throws Exception
+    {
+        File generatedSourcesDir = new File(
+                targetDir.getAbsolutePath() + File.separator + "test-data" + File.separator + "good" + File.separator + "generated-sources");
+        generatedSourcesDir.mkdirs();
+
+        createJavaProjectWithGoodLicenses(generatedSourcesDir, "org.neo4j.sharding.good");
+
+        File buildFile = createBuildFile(targetDir, generatedSourcesDir);
+
+        Project project = new Project();
+        project.setUserProperty("ant.file", buildFile.getAbsolutePath());
+        project.init();
+
+        ProjectHelper helper = ProjectHelper.getProjectHelper();
+        project.addReference("ant.projectHelper", helper);
+        helper.parse(project, buildFile);
+
+        boolean successfullyRan = false;
+        try
+        {
+            project.executeTarget(project.getDefaultTarget());
+            successfullyRan = true;
+        }
+        catch (BuildException e)
+        {
+            fail("Should not fail on Java files with good license headers");
+        }
+
+        assertTrue(successfullyRan);
+    }
+
     @Test
     public void shouldFailOnEncounterWithJavaFileWithoutLicense() throws Exception
     {
-        File targetDir = new File("target");
-        File generatedSourcesDir = new File(targetDir.getAbsolutePath() + File.separator + "generated-sources");
+        File generatedSourcesDir = new File(
+                targetDir.getAbsolutePath() + File.separator + "test-data" + File.separator + "bad" + File.separator + "generated-sources");
         generatedSourcesDir.mkdirs();
 
-        createDummyJavaProject(generatedSourcesDir, "org.neo4j.sharding");
+        createLicenselessJavaProject(generatedSourcesDir, "org.neo4j.sharding.headerless");
 
         File buildFile = createBuildFile(targetDir, generatedSourcesDir);
 
@@ -47,8 +86,6 @@ public class ProjectLicenseHeaderCheckerFunctionalTest
     private File createBuildFile(File targetDir, File generatedSourcesDir) throws IOException
     {
 
-        System.out.println(generatedSourcesDir.getAbsolutePath());
-
         File buildFile = new File(targetDir.getAbsolutePath() + File.separator + "build.xml");
 
         FileWriter writer = new FileWriter(buildFile);
@@ -68,8 +105,8 @@ public class ProjectLicenseHeaderCheckerFunctionalTest
                              "  <target name=\"run\">\n" +
                              "    <check-license>\n" +
                              "      <license>\n" +
-                             "        <line>Copyright (C) 2012 Neo Technology</line>\n" +
-                             "        <line>All rights reserved</line>\n" +
+                             "        <line>" + yearLine + "</line>\n" +
+                             "        <line>" + rightsLine + "</line>\n" +
                              "      </license>\n" +
                              "      <fileset dir=\"${generated.sources.dir}\" includes=\"**/*.java\"/>\n" +
                              "    </check-license>\n" +
@@ -81,14 +118,51 @@ public class ProjectLicenseHeaderCheckerFunctionalTest
         return buildFile;
     }
 
-    private void createDummyJavaProject(File outDir, String packageName) throws IOException
+    private void createLicenselessJavaProject(File outDir, String packageName) throws IOException
     {
-        System.out.println(outDir.getAbsolutePath());
         for (int i = 0; i < 3; i++)
         {
             createHeaderlessJavaFile(new File(outDir.getPath() + File.separator + toDirectory(packageName)),
                                      packageName);
         }
+    }
+
+    private void createJavaProjectWithGoodLicenses(File outDir, String packageName) throws IOException
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            createJavaFileWithGoodHeader(new File(outDir.getPath() + File.separator + toDirectory(packageName)),
+                                         packageName);
+        }
+    }
+
+    private void createJavaFileWithGoodHeader(File outDir, String packageName) throws IOException
+    {
+        outDir.mkdirs();
+
+        String randomClassname = myRandomClassname();
+
+        File javaFile = new File(outDir.getAbsolutePath() + File.separator + randomClassname + ".java");
+
+        FileWriter writer = new FileWriter(javaFile);
+        writer.write(javaLicenseHeader() + "\n\npackage " + packageName + ";\n\npublic class " + randomClassname + " {}");
+        writer.close();
+    }
+
+    private String javaLicenseHeader()
+    {
+        StringBuffer sb = new StringBuffer();
+        sb.append("/**");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(" * ");
+        sb.append(yearLine);
+        sb.append(System.getProperty("line.separator"));
+        sb.append(" * ");
+        sb.append(rightsLine);
+        sb.append(System.getProperty("line.separator"));
+        sb.append(" */");
+        sb.append(System.getProperty("line.separator"));
+        return sb.toString();
     }
 
 
@@ -99,9 +173,6 @@ public class ProjectLicenseHeaderCheckerFunctionalTest
         String randomClassname = myRandomClassname();
 
         File javaFile = new File(outDir.getAbsolutePath() + File.separator + randomClassname + ".java");
-
-
-        System.out.println(javaFile.getAbsolutePath());
 
         FileWriter writer = new FileWriter(javaFile);
         writer.write("package " + packageName + ";\n\npublic class " + randomClassname + " {}");
