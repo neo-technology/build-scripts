@@ -62,7 +62,11 @@
     <copy file="test/aether.jar" tofile="aether.jar"/>
   </target>
 
-  <target name="complete" depends="-replace aether">
+  <target name="get-license-plugin">
+    <ant dir="not-maven-license-plugin"/>
+  </target>
+
+  <target name="complete" depends="-replace aether, get-license-plugin">
     <echo message="done."/>
   </target>
 
