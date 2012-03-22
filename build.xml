@@ -62,7 +62,9 @@
     <copy file="test/aether.jar" tofile="aether.jar"/>
   </target>
 
+
   <target name="get-ant-license-checker">
+    <mkdir dir="target/classes"/>
     <ant dir="ant-license-checker"/>
   </target>
 
