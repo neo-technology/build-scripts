@@ -4,7 +4,7 @@ These scripts require Ant 1.8.
 
 Default usage:
 
-    <project name="..." default="complete"/>
+    <project name="..." default="complete">
       <property name="commons.xml" location="lib/build/commons.xml"/>
       <available file="${commons.xml}" property="commons.url"
                  value="file:${commons.xml}"/>
