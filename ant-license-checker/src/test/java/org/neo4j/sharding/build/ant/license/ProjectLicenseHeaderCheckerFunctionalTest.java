@@ -90,19 +90,19 @@ public class ProjectLicenseHeaderCheckerFunctionalTest
 
         FileWriter writer = new FileWriter(buildFile);
         writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                             "<project name=\"not-maven-license-plugin-functional-tests\" default=\"run\">\n" +
+                             "<project name=\"not-maven-license-plugin-functional-tests\" default=\"check.licenses\">\n" +
                              "  <property name=\"target.dir\" location=\"" + targetDir.getAbsolutePath() + "\"/>\n" +
                              "  <property name=\"generated.sources.dir\" location=\"" + generatedSourcesDir.getAbsolutePath() + "\"/>\n" +
-                             "  <typedef name=\"line\" classname=\"org.neo4j.sharding.build.ant.license.Line\"/>\n" +
-                             "  <typedef name=\"license\" classname=\"org.neo4j.sharding.build.ant.license.License\"/>\n" +
-                             "  <taskdef name=\"check-license\" classname=\"org.neo4j.sharding.build.ant.license.ProjectLicenseHeaderChecker\" >\n" +
-                             "    <classpath>\n" +
-                             "      <fileset dir=\"${target.dir}/classes\">\n" +
-                             "        <include name=\"**/*.class\"/>\n" +
-                             "      </fileset>\n" +
-                             "    </classpath>\n" +
-                             "  </taskdef>\n" +
-                             "  <target name=\"run\">\n" +
+                             "  <target name=\"check.licenses\">\n" +
+                             "    <typedef name=\"line\" classname=\"org.neo4j.sharding.build.ant.license.Line\"/>\n" +
+                             "    <typedef name=\"license\" classname=\"org.neo4j.sharding.build.ant.license.License\"/>\n" +
+                             "    <taskdef name=\"check-license\" classname=\"org.neo4j.sharding.build.ant.license.ProjectLicenseHeaderChecker\" >\n" +
+                             "      <classpath>\n" +
+                             "        <fileset dir=\"${target.dir}/classes\">\n" +
+                             "          <include name=\"**/*.class\"/>\n" +
+                             "        </fileset>\n" +
+                             "      </classpath>\n" +
+                             "    </taskdef>\n" +
                              "    <check-license>\n" +
                              "      <license>\n" +
                              "        <line>" + yearLine + "</line>\n" +
