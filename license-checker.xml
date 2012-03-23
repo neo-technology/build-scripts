@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="license-checker">
+  <sequential>
+    <local name="build"/>
+    <dirname property="build" file="${commons.xml}"/>
+    <condition property="license-checker.jar" value="${build}/license-checker.jar">
+      <isset property="commons.xml"/>
+    </condition>
+    <fail unless="license-checker.jar"
+	  message="Could not find location to put license-checker.jar"/>
+  </sequential>
+
+  <target name="clean license-checker">
+    <delete file="${license-checker.jar}"/>
+  </target>
+
+  <target name="-license-checker get">
+    <get src="${commons.parent.uri}/license-checker.jar"
+         dest="${license-checker.jar}" usetimestamp="true" ignoreerrors="true"/>
+    <condition property="license-checker.available">
+      <available file="${license-checker.jar}" type="file"/>
+    </condition>
+    <local name="message"/>
+    <condition property="message" value="license-checker found"
+               else="Could not download pre-built license-checker, will build license-checker">
+      <isset property="license-checker.available"/>
+    </condition>
+    <echo message="${message}"/>
+  </target>
+
+  <target name="-license-checker build" depends="-license-checker get" unless="license-checker.available">
+    <local name="gh.org"/><local name="gh.repo"/>
+    <property name="gh.org" value="neo-technology"/>
+    <property name="gh.repo" value="license-checker-ant-tasks"/>
+    <local name="commit"/><!-- get the latest commit -->
+    <script language="javascript">
+      <![CDATA[
+      var reader = new java.io.BufferedReader(
+      new java.io.InputStreamReader(
+        new java.net.URL(
+          "https://api.github.com/repos/" + project.getProperty("gh.org")
+          + "/" + project.getProperty("gh.repo")
+          + "/commits?page=0&per_page=1").openStream()));
+      var data=""; var line;
+      while ((line = reader.readLine()) != null) {
+        data += line;
+      }
+      project.setProperty("commit",eval("("+data+")")[0]["sha"]);
+      ]]>
+    </script>
+    <local name="build.dir"/><local name="license-checker.target.dir"/>
+    <dirname property="build.dir" file="${license-checker.jar}"/>
+    <property name="license-checker.target.dir" location="${build.dir}/tmp-license-checker-tmp"/>
+    <mkdir dir="${license-checker.target.dir}"/>
+    <get src="https://github.com/${gh.org}/${gh.repo}/zipball/${commit}"
+         dest="${build.dir}/license-checker.zip"/>
+    <unzip src="${build.dir}/license-checker.zip" dest="${license-checker.target.dir}"/>
+    <local name="license-checker.unpack.dir"/>
+    <pathconvert property="license-checker.unpack.dir">
+      <dirset dir="${license-checker.target.dir}"
+              includes="*-license-checker-ant-*"/>
+    </pathconvert>
+    <local name="mvn.settings.xml"/>
+    <property name="mvn.settings.xml"
+	      location="${license-checker.target.dir}/settings.xml"/>
+    <echo file="${mvn.settings.xml}"><![CDATA[
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+			      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <profiles>
+    <profile>
+      <activation><activeByDefault>true</activeByDefault></activation>
+      <repositories>
+	<repository>
+	  <id>sonatype-nexus-snapshots</id>
+	  <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+	  <releases><enabled>false</enabled></releases>
+	  <snapshots><enabled>true</enabled></snapshots>
+	</repository>
+      </repositories>
+    </profile>
+  </profiles>
+</settings>
+]]></echo>
+    <local name="mvn.res"/>
+    <exec executable="mvn" dir="${license-checker.unpack.dir}" resultproperty="mvn.res"
+          failifexecutionfails="no" failonerror="no">
+      <arg value="--settings"/><arg value="${mvn.settings.xml}"/>
+      <arg value="clean"/>
+      <arg value="package"/>
+      <arg value="dependency:copy-dependencies"/>
+    </exec>
+    <local name="mvn.fail"/>
+    <condition property="mvn.fail">
+      <or>
+        <not><isset property="mvn.res"/></not>
+        <isfailure code="${mvn.res}"/>
+      </or>
+    </condition>
+    <fail if="mvn.fail" message="Failed to bootstrap license-checker"/>
+    <jar jarfile="${license-checker.jar}" filesetmanifest="merge">
+      <zipgroupfileset dir="${license-checker.unpack.dir}/target"
+                       includes="license-checker-ant-tasks-*-uber.jar"/>
+      <manifest>
+        <attribute name="GitHub-Commit-SHA" value="${commit}"/>
+      </manifest>
+    </jar>
+    <delete dir="${license-checker.target.dir}"/>
+    <delete file="${build.dir}/license-checker.zip"/>
+  </target>
+
+  <target name="-license-checker setup" depends="-license-checker build" extensionOf="-pre-setup">
+    <taskdef uri="antlib:org.sonatype.license-checker.ant"
+             resource="org/sonatype/license-checker/ant/antlib.xml">
+      <classpath location="${license-checker.jar}"/>
+    </taskdef>
+    <property name="pom.xml" value="pom.xml"/>
+    <license-checker:pom file="${pom.xml}" id="pom"/>
+    <property name="project.group" value="${pom.groupId}"/>
+    <property name="project.name" value="${pom.artifactId}"/>
+    <property name="project.version" value="${pom.version}"/>
+
+    <license-checker:remoterepo id="neo4j"
+            url="http://m2.neo4j.org/content/repositories/everything"
+            releases="true" snapshots="true" checksums="fail"/>
+    <license-checker:remoterepo id="local" releases="true" snapshots="true"
+		       url="file:${project.install.target}"/>
+  </target>
+
+  <target name="-license-checker dependencies" depends="-license-checker setup"
+          extensionOf="-pre-build">
+    <path id="transitive.main.classpath"/>
+    <path id="transitive.test.classpath"/>
+    <license-checker:resolve transitive="false">
+      <license-checker:remoterepo refid="neo4j"/>
+      <license-checker:remoterepo refid="local"/>
+      <license-checker:dependencies pomRef="pom"/>
+      <license-checker:path refid="thirdparty.main.classpath" classpath="compile"/>
+      <license-checker:path refid="thirdparty.test.classpath" classpath="test"/>
+    </license-checker:resolve>
+    <license-checker:resolve transitive="true">
+      <license-checker:remoterepo refid="neo4j"/>
+      <license-checker:remoterepo refid="local"/>
+      <license-checker:dependencies pomRef="pom"/>
+      <license-checker:path refid="transitive.main.classpath" classpath="compile"/>
+      <license-checker:path refid="transitive.test.classpath" classpath="test"/>
+    </license-checker:resolve>
+    <local name="main.ok"/><local name="test.ok"/>
+    <condition property="main.ok">
+      <equals arg1="${toString:transitive.main.classpath}"
+              arg2="${toString:thirdparty.main.classpath}"/>
+    </condition>
+    <must-be-equal-paths path1="transitive.main.classpath"
+			 path2="thirdparty.main.classpath"/>
+    <must-be-equal-paths path1="transitive.test.classpath"
+			 path2="thirdparty.test.classpath"/>
+  </target>
+
+  <macrodef name="must-be-equal-paths">
+    <attribute name="path1"/>
+    <attribute name="path2"/>
+    <sequential>
+      <local name="sep"/><local name="ok"/>
+      <local name="one"/><local name="two"/>
+      <property name="sep" value="${line.separator}  "/>
+      <pathconvert property="one" pathsep="${sep}" refid="@{path1}"/>
+      <pathconvert property="two" pathsep="${sep}" refid="@{path2}"/>
+      <condition property="ok">
+	<equals arg1="${one}" arg2="${two}"/>
+      </condition>
+      <fail unless="ok" message="Paths do not match${line.separator}= @{path1} =${sep}${one}${line.separator}= @{path2} =${sep}${two}"/>
+    </sequential>
+  </macrodef>
+
+  <target name="package" depends="test" extensionOf="complete">
+    <license-checker:artifacts id="packaging">
+      <artifact file="${main.jar}"/>
+      <artifact file="${main.src.jar}" classifier="sources"/>
+      <artifact file="${test.jar}" classifier="tests"/>
+    </license-checker:artifacts>
+  </target>
+
+  <target name="install" depends="package" if="project.install.target"
+	  extensionOf="complete">
+    <mkdir dir="${project.install.target}"/>
+    <license-checker:localrepo dir="${project.install.target}"/>
+    <license-checker:install artifactsref="packaging"/>
+  </target>
+
+</project>
