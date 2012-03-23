@@ -110,13 +110,13 @@
     <delete file="${build.dir}/license-checker.zip"/>
   </target>
 
-  <target name="-license-checker setup" depends="-license-checker build" extensionOf="-pre-setup">
-    <taskdef uri="antlib:org.sonatype.license-checker.ant"
-             resource="org/sonatype/license-checker/ant/antlib.xml">
-      <classpath location="${license-checker.jar}"/>
+  <target name="-aether setup" depends="-license-checker build" extensionOf="-pre-setup">
+    <taskdef uri="antlib:org.sonatype.aether.ant"
+             resource="org/sonatype/aether/ant/antlib.xml">
+      <classpath location="${aether.jar}"/>
     </taskdef>
     <property name="pom.xml" value="pom.xml"/>
-    <license-checker:pom file="${pom.xml}" id="pom"/>
+    <aether:pom file="${pom.xml}" id="pom"/>
     <property name="project.group" value="${pom.groupId}"/>
     <property name="project.name" value="${pom.artifactId}"/>
     <property name="project.version" value="${pom.version}"/>
