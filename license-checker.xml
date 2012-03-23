@@ -121,14 +121,14 @@
     <property name="project.name" value="${pom.artifactId}"/>
     <property name="project.version" value="${pom.version}"/>
 
-    <license-checker:remoterepo id="neo4j"
+    <aether:remoterepo id="neo4j"
             url="http://m2.neo4j.org/content/repositories/everything"
             releases="true" snapshots="true" checksums="fail"/>
-    <license-checker:remoterepo id="local" releases="true" snapshots="true"
+    <aether:remoterepo id="local" releases="true" snapshots="true"
 		       url="file:${project.install.target}"/>
   </target>
 
-  <target name="-license-checker dependencies" depends="-license-checker setup"
+  <target name="-license-checker dependencies" depends="-aether setup"
           extensionOf="-pre-build">
     <path id="transitive.main.classpath"/>
     <path id="transitive.test.classpath"/>
