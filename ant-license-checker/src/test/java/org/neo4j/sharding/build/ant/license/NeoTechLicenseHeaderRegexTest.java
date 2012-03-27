@@ -1,10 +1,10 @@
 package org.neo4j.sharding.build.ant.license;
 
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 public class NeoTechLicenseHeaderRegexTest
 {

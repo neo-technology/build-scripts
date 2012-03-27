@@ -1,8 +1,8 @@
 package com.neotechnology.build.test;
 
-import org.neo4j.kernel.Neo4jKernelVersion;
-import org.junit.*;
 import static org.junit.Assert.*;
+
+import org.neo4j.kernel.Neo4jKernelVersion;
 
 public class CorrectNeo4jVersionTest {
     public @Test void hasSnapshotVersionOfNeo4j() {

@@ -1,13 +1,13 @@
 package org.neo4j.sharding.build.ant.license;
 
-import org.junit.Test;
-import org.neo4j.test.TargetDirectory;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.neo4j.test.TargetDirectory;
 
 public class SingleFileLicenseHeaderCheckerTest
 {

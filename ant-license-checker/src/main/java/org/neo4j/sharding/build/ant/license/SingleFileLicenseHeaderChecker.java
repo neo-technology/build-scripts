@@ -1,13 +1,13 @@
 package org.neo4j.sharding.build.ant.license;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import org.apache.tools.ant.BuildException;
 
 public class SingleFileLicenseHeaderChecker
 {

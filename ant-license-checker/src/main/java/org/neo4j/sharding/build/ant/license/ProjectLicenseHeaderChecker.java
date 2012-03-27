@@ -1,13 +1,13 @@
 package org.neo4j.sharding.build.ant.license;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
 
 public class ProjectLicenseHeaderChecker extends Task
 {
