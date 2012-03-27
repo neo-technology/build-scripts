@@ -124,8 +124,10 @@
     <aether:remoterepo id="neo4j"
             url="http://m2.neo4j.org/content/repositories/everything"
             releases="true" snapshots="true" checksums="fail"/>
-    <aether:remoterepo id="local" releases="true" snapshots="true"
-		       url="file:${project.install.target}"/>
+    <!--<aether:localrepo id="local" releases="true" snapshots="true"-->
+		       <!--url="file:${project.install.target}"/>-->
+      <aether:localrepo id="local"
+                        dir="${project.install.target}"/>
   </target>
 
   <target name="-aether dependencies" depends="-aether setup"
@@ -134,14 +136,14 @@
     <path id="transitive.test.classpath"/>
     <aether:resolve transitive="false">
       <aether:remoterepo refid="neo4j"/>
-      <aether:remoterepo refid="local"/>
+      <aether:localrepo refid="local"/>
       <aether:dependencies pomRef="pom"/>
       <aether:path refid="thirdparty.main.classpath" classpath="compile"/>
       <aether:path refid="thirdparty.test.classpath" classpath="test"/>
     </aether:resolve>
     <aether:resolve transitive="true">
       <aether:remoterepo refid="neo4j"/>
-      <aether:remoterepo refid="local"/>
+      <aether:localrepo refid="local"/>
       <aether:dependencies pomRef="pom"/>
       <aether:path refid="transitive.main.classpath" classpath="compile"/>
       <aether:path refid="transitive.test.classpath" classpath="test"/>
