@@ -1,5 +1,6 @@
 package com.neotechnology.build.test;
 
+import org.junit.Test;
 import static org.junit.Assert.*;
 
 import org.neo4j.kernel.Neo4jKernelVersion;
