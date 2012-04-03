@@ -6,6 +6,6 @@
   <property name="commons.original" location="../../commons.xml"/>
   <property name="commons.url" value="file:${commons.original}"/>
   <import><url url="${commons.url}"/></import>
-  <using lib="aether"/>
+  <import file="../../aether.xml"/>
   <target name="clean-first" depends="clean" extensionOf="-pre-build"/>
 </project>

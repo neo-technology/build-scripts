@@ -120,12 +120,11 @@
     <property name="project.group" value="${pom.groupId}"/>
     <property name="project.name" value="${pom.artifactId}"/>
     <property name="project.version" value="${pom.version}"/>
+    <property name="project.install.target" value=".repo"/>
 
     <aether:remoterepo id="neo4j"
             url="http://m2.neo4j.org/content/repositories/everything"
             releases="true" snapshots="true" checksums="fail"/>
-    <!--<aether:localrepo id="local" releases="true" snapshots="true"-->
-		       <!--url="file:${project.install.target}"/>-->
       <aether:localrepo id="local"
                         dir="${project.install.target}"/>
   </target>
@@ -190,9 +189,4 @@
     <aether:install artifactsref="packaging"/>
   </target>
 
-  <!--target name="deploy" depends="package">
-    <aether:deploy artifactsref="packaging">
-      <remoteRepo id="dist" url="file:///${build.dir}/dist-repo"/>
-    </aether:deploy>
-  </target-->
 </project>
