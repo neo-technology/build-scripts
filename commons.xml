@@ -178,7 +178,6 @@
         <fileset dir="@{source}"/>
         <fileset dir="@{genSource}"/>
       </jar>
-      <delete dir="${target.tmp}"/>
       <fail message="compilation failed" if="${compilation.failure}"/>
     </sequential>
   </macrodef>
