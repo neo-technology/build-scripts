@@ -19,7 +19,7 @@
     <property name="sonar.tests" value="${source.test.java}" />
     <property name="sonar.core.codeCoveragePlugin" value="jacoco" />
     <property name="sonar.jacoco.antTargets" value="test" />
-    <property name="sonar.projectKey" value="org.neo4j.bigdata:client-api" />
+    <property name="sonar.projectKey" value="org.neo4j.bigdata:${ant.project.name}" />
 
     <sonar:sonar key="org.neo4j.bigdata" version="1.0-SNAPSHOT">
     </sonar:sonar>
