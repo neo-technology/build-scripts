@@ -34,7 +34,7 @@
 
     <sequential>
       <mkdir dir="@{target}"/>
-      <apply executable="protoc" parallel="on" failonerror="yes">
+      <apply executable="protoc" failonerror="yes">
 	<arg value="-I@{source}"/>
 	<arg value="--java_out=@{target}"/>
 	<fileset dir="@{source}">
