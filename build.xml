@@ -64,7 +64,7 @@
 
   <target name="-reuse build-libs" depends="-reuse aether"/>
   
-  <target name="-reuse license-checker">
+  <!-- <target name="-reuse license-checker">
     <copy file="ant-license-checker/target/license-checker-1.0-SNAPSHOT.jar" tofile="test/license-checker.jar"/>
   </target>
 
@@ -83,7 +83,7 @@
 
   <target name="-replace license-checker" depends="-check new license-checker" if="old.license-checker">
     <copy file="test/license-checker.jar" tofile="license-checker.jar"/>
-  </target>
+  </target> -->
 
   <target name="complete" depends="-replace aether">
     <echo message="done."/>
