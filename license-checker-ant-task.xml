@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="license-checker">
+  <target name="check-license" depends="build-test">
+    <typedef name="line" classname="org.neo4j.bigdata.build.ant.licensechecker.Line">
+		<classpath path="../build/license-checker-ant-task.jar"/>
+	</typedef>
+    <typedef name="license" classname="org.neo4j.bigdata.build.ant.licensechecker.License">
+		<classpath path="../build/license-checker-ant-task.jar"/>
+	</typedef>
+    <taskdef name="check-license" classname="org.neo4j.bigdata.build.ant.licensechecker.ProjectLicenseHeaderChecker">
+		<classpath path="../build/license-checker-ant-task.jar"/>
+    </taskdef>
+    <check-license>
+      <license>
+        <line>Copyright (C) 2012 Neo Technology</line>
+        <line>All rights reserved</line>
+      </license>
+      <fileset dir="src" includes="**/*.java"/>
+    </check-license>
+  </target>
+</project>
