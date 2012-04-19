@@ -64,27 +64,6 @@
 
   <target name="-reuse build-libs" depends="-reuse aether"/>
   
-  <!-- <target name="-reuse license-checker">
-    <copy file="ant-license-checker/target/license-checker-1.0-SNAPSHOT.jar" tofile="test/license-checker.jar"/>
-  </target>
-
-  <target name="-check new license-checker" depends="test">
-    <local name="old.GitHub-Commit-SHA"/>
-    <local name="new.GitHub-Commit-SHA"/>
-    <extract-commit-sha jar="license-checker.jar" prefix="old"/>
-    <extract-commit-sha jar="test/license-checker.jar" prefix="new"/>
-    <condition property="old.license-checker">
-      <not>
-	    <equals arg1="${old.GitHub-Commit-SHA}"
-                arg2="${new.GitHub-Commit-SHA}"/>
-      </not>
-    </condition>
-  </target>
-
-  <target name="-replace license-checker" depends="-check new license-checker" if="old.license-checker">
-    <copy file="test/license-checker.jar" tofile="license-checker.jar"/>
-  </target> -->
-
   <target name="complete" depends="-replace aether">
     <echo message="done."/>
   </target>
