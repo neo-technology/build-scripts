@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="license-checker">
-  <target name="check-license" depends="build-test">
+  <target name="license-checker" depends="build-test">
     <typedef name="line" classname="org.neo4j.bigdata.build.ant.licensechecker.Line">
 		<classpath path="../build/license-checker-ant-task.jar"/>
 	</typedef>
