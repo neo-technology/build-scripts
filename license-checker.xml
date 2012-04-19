@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="license-checker">
   <target name="license-checker" depends="build-test">
-    <typedef name="line" classname="org.neo4j.bigdata.build.ant.licensechecker.Line">
+    <typedef name="line" classname="com.neotechnology.build.ant.licensechecker.Line">
 		<classpath path="../build/license-checker-ant-task.jar"/>
 	</typedef>
-    <typedef name="license" classname="org.neo4j.bigdata.build.ant.licensechecker.License">
+    <typedef name="license" classname="com.neotechnology.build.ant.licensechecker.License">
 		<classpath path="../build/license-checker-ant-task.jar"/>
 	</typedef>
-    <taskdef name="check-license" classname="org.neo4j.bigdata.build.ant.licensechecker.ProjectLicenseHeaderChecker">
+    <taskdef name="check-license" classname="com.neotechnology.build.ant.licensechecker.ProjectLicenseHeaderChecker">
 		<classpath path="../build/license-checker-ant-task.jar"/>
     </taskdef>
     <check-license>
