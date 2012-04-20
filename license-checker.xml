@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="license-checker">
-  <target name="license-checker" depends="build-test">
+  <target name="license-checker" extensionOf="-pre-build">
     <typedef name="line" classname="com.neotechnology.build.ant.licensechecker.Line">
 		<classpath path="../build/license-checker-ant-task.jar"/>
 	</typedef>
