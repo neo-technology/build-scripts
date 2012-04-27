@@ -18,8 +18,7 @@
          dest="${emma.jar}" usetimestamp="true" ignoreerrors="true"/>
     <get src="${commons.parent.uri}/emma_ant.jar"
          dest="${emma-ant.jar}" usetimestamp="true" ignoreerrors="true"/>
-        
-    <property name="emma.dir" value="/Users/apcj/Desktop/emma-2.0.5312/lib"/>
+
     <path id="emma.lib" >
       <pathelement location="${emma.jar}" />
       <pathelement location="${emma-ant.jar}" />
@@ -36,7 +35,7 @@
 
     <path id="runtime.classpath">
       <path refid="main.classpath"/>
-      <pathelement location="${emma.dir}/emma.jar"/>
+      <pathelement location="${emma.jar}"/>
     </path>
   </target>
   
