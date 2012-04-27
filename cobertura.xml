@@ -33,6 +33,7 @@
   </target>
   
   <target name="cobertura.report" extensionOf="-post-test">
-    <cobertura-report datafile="${cobertura.data}" srcdir="${source.main.java}" destdir="${coverage.report.dir}"/>
+    <cobertura-report format="xml" datafile="${cobertura.data}" srcdir="${source.main.java}" destdir="${coverage.report.dir}"/>
+    <cobertura-report format="html" datafile="${cobertura.data}" srcdir="${source.main.java}" destdir="${coverage.report.dir}"/>
   </target>
 </project>
