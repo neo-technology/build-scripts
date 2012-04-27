@@ -12,11 +12,9 @@
   </sequential>
   
   <target name="emma.setup" extensionOf="-post-setup">
-    <property name="emma.jar" location=""/>
-    <property name="emma-ant.jar" location=""/>
-    <get src="${commons.parent.uri}/emma.jar"
+    <get src="${commons.parent.uri}/lib/emma/emma.jar"
          dest="${emma.jar}" usetimestamp="true" ignoreerrors="true"/>
-    <get src="${commons.parent.uri}/emma_ant.jar"
+    <get src="${commons.parent.uri}/lib/emma/emma_ant.jar"
          dest="${emma-ant.jar}" usetimestamp="true" ignoreerrors="true"/>
 
     <path id="emma.lib" >
@@ -61,9 +59,6 @@
   </target>
   
   <target name="emma.report" extensionOf="-post-test">
-    <path id="emma.classpath">
-      <pathelement location="${main.jar}"/>
-    </path>
     <emma enabled="true">
       <report sourcepath="${source.main.java}"
               sort="+block,+name,+method,+class"
