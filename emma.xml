@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="emma">
+  <sequential>
+    <local name="build"/>
+    <dirname property="build" file="${commons.xml}"/>
+    <condition property="emma.jar" value="${build}/emma.jar">
+      <isset property="commons.xml"/>
+    </condition>
+    <fail unless="emma.jar"
+          message="Could not find location to put emma.jar"/>
+    <property name="emma-ant.jar" value="${build}/emma_ant.jar"/>
+  </sequential>
+  
+  <target name="emma.setup" extensionOf="-post-setup">
+    <property name="emma.jar" location=""/>
+    <property name="emma-ant.jar" location=""/>
+    <get src="${commons.parent.uri}/emma.jar"
+         dest="${emma.jar}" usetimestamp="true" ignoreerrors="true"/>
+    <get src="${commons.parent.uri}/emma_ant.jar"
+         dest="${emma-ant.jar}" usetimestamp="true" ignoreerrors="true"/>
+        
+    <property name="emma.dir" value="/Users/apcj/Desktop/emma-2.0.5312/lib"/>
+    <path id="emma.lib" >
+      <pathelement location="${emma.jar}" />
+      <pathelement location="${emma-ant.jar}" />
+    </path>
+
+    <taskdef resource="emma_ant.properties" classpathref="emma.lib" />
+    
+    <property name="coverage.dir" location="${target.dir}/coverage"/>
+    <property name="coverage.report.dir" location="${target.dir}/coverage-report"/>
+    <property name="emma.out.dir" location="${target.dir}/instrumented-classes"/>
+    <property name="main.instrumented.jar" location="${target.dir}/instrumented-${main.jar.name}"/>
+    <property name="coverage.test.args"
+              value="-Demma.coverage.out.file=${coverage.dir}/coverage.emma -Demma.coverage.out.merge=false"/>
+
+    <path id="runtime.classpath">
+      <path refid="main.classpath"/>
+      <pathelement location="${emma.dir}/emma.jar"/>
+    </path>
+  </target>
+  
+  <target name="emma.instrument" extensionOf="-pre-test">
+    <mkdir dir="${coverage.dir}"/>
+    <mkdir dir="${coverage.report.dir}"/>
+    <path id="emma.classpath">
+      <pathelement location="${main.jar}"/>
+    </path>
+    <emma enabled="true">
+      <instr instrpathref="emma.classpath"
+             destdir="${emma.out.dir}"
+             metadatafile="${coverage.dir}/metadata.emma"
+             merge="true"/>
+    </emma>
+    <copy todir="${emma.out.dir}">
+      <zipfileset src="${main.jar}"/>
+    </copy>
+    <jar jarfile="${main.instrumented.jar}">
+      <fileset dir="${emma.out.dir}"/>
+    </jar>
+    <delete dir="${emma.out.dir}"/>
+  </target>
+  
+  <target name="emma.report" extensionOf="-post-test">
+    <path id="emma.classpath">
+      <pathelement location="${main.jar}"/>
+    </path>
+    <emma enabled="true">
+      <report sourcepath="${source.main.java}"
+              sort="+block,+name,+method,+class"
+              metrics="method:70,block:80,line:80,class:100">
+        <fileset dir="${coverage.dir}" >
+          <include name="*.emma" />
+        </fileset>
+        <html outfile="${coverage.report.dir}/coverage.html"
+              depth="method"
+              columns="name,class,method,block,line"/>
+      </report>
+    </emma>
+  </target>
+  
+</project>

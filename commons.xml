@@ -185,6 +185,7 @@
   <macrodef name="test">
     <attribute name="jar"/>
     <element name="class-path"/>
+    <element name="arguments"/>
 
     <sequential>
       <mkdir dir="${test.reports}"/>
@@ -203,6 +204,8 @@
             <exclude name="**/*$*"/>
           </zipfileset>
         </batchtest>
+        
+        <arguments/>
       </junit>
       <fail message="Test failure" if="failure"/>
     </sequential>
@@ -240,13 +243,22 @@
   <extension-point name="-pre-test" depends="build-test"/>
 
   <target name="test" depends="-pre-test">
+    <!-- if no instrumented jar specified, use the un-instrumented one -->
+    <property name="main.instrumented.jar" value="${main.jar}"/>
+    <property name="coverage.test.args" value=""/>
+    
     <test jar="${test.jar}">
       <class-path>
         <path refid="test.classpath"/>
-        <pathelement location="${main.jar}"/>
+        <pathelement location="${main.instrumented.jar}"/>
       </class-path>
+      <arguments>
+        <jvmarg line="${coverage.test.args}"/>
+      </arguments>
     </test>
   </target>
 
-  <extension-point name="complete" depends="test"/>
+  <extension-point name="-post-test" depends="test"/>
+  
+  <extension-point name="complete" depends="-post-test"/>
 </project>
