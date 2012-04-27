@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="cobertura">
+
+  <target name="cobertura.setup" extensionOf="-post-setup">
+    <path id="cobertura.lib" >
+      <fileset dir="../build/lib/cobertura">
+  			<include name="*.jar" />
+  		</fileset>
+    </path>
+
+  	<taskdef classpathref="cobertura.lib" resource="tasks.properties"/>
+    
+    <property name="coverage.dir" location="${target.dir}/coverage"/>
+    <property name="coverage.report.dir" location="${target.dir}/coverage-report"/>
+    <property name="cobertura.out.dir" location="${target.dir}/instrumented"/>
+    <property name="cobertura.data" location="${coverage.dir}/coverage.ser"/>
+    <property name="main.instrumented.jar" location="${cobertura.out.dir}/${main.jar.name}"/>
+    <property name="coverage.test.args" value="-Dnet.sourceforge.cobertura.datafile=${cobertura.data}"/>
+
+    <path id="runtime.classpath">
+      <path refid="main.classpath"/>
+      <path refid="cobertura.lib"/>
+    </path>
+  </target>
+  
+  <target name="cobertura.instrument" extensionOf="-pre-test">
+    <mkdir dir="${cobertura.out.dir}"/>
+    <mkdir dir="${coverage.dir}"/>
+    <mkdir dir="${coverage.report.dir}"/>
+    <cobertura-instrument todir="${cobertura.out.dir}" datafile="${cobertura.data}">
+      <fileset file="${main.jar}"/>
+    </cobertura-instrument>
+  </target>
+  
+  <target name="cobertura.report" extensionOf="-post-test">
+    <cobertura-report datafile="${cobertura.data}" srcdir="${source.main.java}" destdir="${coverage.report.dir}"/>
+  </target>
+</project>
