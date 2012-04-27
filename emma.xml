@@ -72,6 +72,7 @@
           <include name="*.emma" />
         </fileset>
         <html outfile="${coverage.report.dir}/coverage.html"
+              encoding="UTF-8"
               depth="method"
               columns="name,class,method,block,line"/>
       </report>
