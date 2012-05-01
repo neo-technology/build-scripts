@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="cobertura">
 
-  <target name="cobertura.setup" extensionOf="-post-setup">
+  <target name="cobertura.setup" extensionOf="-post-setup" if="cobertura.enabled">
     <path id="cobertura.lib" >
       <fileset dir="../build/lib/cobertura">
   			<include name="*.jar" />
@@ -23,7 +23,7 @@
     </path>
   </target>
   
-  <target name="cobertura.instrument" extensionOf="-pre-test">
+  <target name="cobertura.instrument" extensionOf="-pre-test" if="cobertura.enabled">
     <mkdir dir="${cobertura.out.dir}"/>
     <mkdir dir="${coverage.dir}"/>
     <mkdir dir="${coverage.report.dir}"/>
