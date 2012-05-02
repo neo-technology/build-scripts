@@ -4,11 +4,11 @@
   <target name="cobertura.setup" extensionOf="-post-setup" if="cobertura.enabled">
     <path id="cobertura.lib" >
       <fileset dir="../build/lib/cobertura">
-  			<include name="*.jar" />
-  		</fileset>
+        <include name="*.jar" />
+      </fileset>
     </path>
 
-  	<taskdef classpathref="cobertura.lib" resource="tasks.properties"/>
+    <taskdef classpathref="cobertura.lib" resource="tasks.properties"/>
     
     <property name="coverage.dir" location="${target.dir}/coverage"/>
     <property name="coverage.report.dir" location="${target.dir}/coverage-report"/>

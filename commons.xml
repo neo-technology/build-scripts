@@ -25,11 +25,7 @@
          skipexisting="yes"/>
   </target>
 
-  <target name="define-module-paths">
-    <path id="internal.module.classpath" />
-  </target>
-  
-  <target name="setup" depends="define-module-paths, -pre-setup">
+  <target name="setup" depends="-pre-setup">
     <!-- Define properties required by common build, unless already defined -->
 
     <property name="compilation.target" value="1.5"/>
@@ -65,15 +61,11 @@
     <!-- create target directories -->
     <mkdir dir="${target.dir}"/>
     <!-- define classpaths -->
-    <path id="thirdparty.main.classpath"/>
-    <path id="main.classpath">
-      <path refid="thirdparty.main.classpath"/>
-      <path refid="internal.module.classpath"/>
-    </path>
+    <path id="main.classpath"/>
     <path id="runtime.classpath"><path refid="main.classpath"/></path>
-    <path id="thirdparty.test.classpath"/>
-    <path id="test.classpath">
-      <path refid="thirdparty.test.classpath"/>
+    <path id="test.classpath"/>
+    <path id="test.runtime.classpath">
+      <path refid="test.classpath"/>
       <path refid="runtime.classpath"/>
     </path>
   </target>
@@ -249,8 +241,8 @@
     
     <test jar="${test.jar}">
       <class-path>
-        <path refid="test.classpath"/>
         <pathelement location="${main.instrumented.jar}"/>
+        <path refid="test.runtime.classpath"/>
       </class-path>
       <arguments>
         <jvmarg line="${coverage.test.args}"/>
