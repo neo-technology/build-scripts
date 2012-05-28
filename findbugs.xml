@@ -12,12 +12,12 @@
     <taskdef classpathref="findbugs.lib" name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
     
     <property name="static.analysis.report.dir" location="${target.dir}/static-analysis-report"/>
-    <property name="static.analysis.report" location="${static.analysis.report.dir}/findbugs-report.xml"/>
+    <property name="static.analysis.findbugs.report" location="${static.analysis.report.dir}/findbugs-report.xml"/>
   </target>
   
   <target name="findbugs.check.rules" extensionOf="-post-test" if="findbugs.enabled">
     <mkdir dir="${static.analysis.report.dir}"/>
-    <findbugs home="../build/lib/findbugs" output="xml" outputFile="${static.analysis.report}" >
+    <findbugs home="../build/lib/findbugs" output="xml" outputFile="${static.analysis.findbugs.report}" >
       <sourcePath path="${source.main.java}" />
       <class location="${main.jar}" />
     </findbugs>

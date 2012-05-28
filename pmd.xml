@@ -11,7 +11,7 @@
     <taskdef classpathref="pmd.lib" name="pmd" classname="net.sourceforge.pmd.ant.PMDTask"/>
     
     <property name="static.analysis.report.dir" location="${target.dir}/static-analysis-report"/>
-    <property name="static.analysis.report" location="${static.analysis.report.dir}/pmd-report.xml"/>
+    <property name="static.analysis.pmd.report" location="${static.analysis.report.dir}/pmd-report.xml"/>
   </target>
   
   <target name="pmd.check.rules" extensionOf="-post-test" if="pmd.enabled">
@@ -19,7 +19,7 @@
     <pmd shortFilenames="true">
       <ruleset>rulesets/java/design.xml,rulesets/java/comments.xml</ruleset>
       <ruleset>java-basic</ruleset>
-      <formatter type="xml" toFile="${static.analysis.report}"/>
+      <formatter type="xml" toFile="${static.analysis.pmd.report}"/>
       <fileset dir="${source.main.java}"/>
     </pmd>
   </target>
