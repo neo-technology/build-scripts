@@ -6,6 +6,7 @@
       <fileset dir="../build/lib/pmd">
         <include name="*.jar" />
       </fileset>
+      <pathelement location="${static.analysis.pmd.rules.dir}"/>
     </path>
 
     <taskdef classpathref="pmd.lib" name="pmd" classname="net.sourceforge.pmd.ant.PMDTask"/>
@@ -16,9 +17,7 @@
   
   <target name="pmd.check.rules" extensionOf="-post-test" if="pmd.enabled">
     <mkdir dir="${static.analysis.report.dir}"/>
-    <pmd shortFilenames="true">
-      <ruleset>rulesets/java/design.xml,rulesets/java/comments.xml</ruleset>
-      <ruleset>java-basic</ruleset>
+    <pmd shortFilenames="true" rulesetfiles="${static.analysis.pmd.rules}">
       <formatter type="xml" toFile="${static.analysis.pmd.report}"/>
       <fileset dir="${source.main.java}"/>
     </pmd>
