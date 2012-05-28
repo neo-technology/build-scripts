@@ -19,6 +19,7 @@
     <mkdir dir="${static.analysis.report.dir}"/>
     <findbugs home="../build/lib/findbugs" output="xml" outputFile="${static.analysis.findbugs.report}" >
       <sourcePath path="${source.main.java}" />
+      <auxClasspath refid="main.classpath" />
       <class location="${main.jar}" />
     </findbugs>
   </target>
