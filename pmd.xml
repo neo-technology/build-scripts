@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="pmd">
+
+  <target name="pmd.setup" extensionOf="-post-setup" if="pmd.enabled">
+    <path id="pmd.lib" >
+      <fileset dir="../build/lib/pmd">
+        <include name="*.jar" />
+      </fileset>
+    </path>
+
+    <taskdef classpathref="pmd.lib" name="pmd" classname="net.sourceforge.pmd.ant.PMDTask"/>
+    
+    <property name="static.analysis.report.dir" location="${target.dir}/static-analysis-report"/>
+    <property name="static.analysis.report" location="${static.analysis.report.dir}/pmd-report.xml"/>
+  </target>
+  
+  <target name="pmd.check.rules" extensionOf="-post-test" if="pmd.enabled">
+    <mkdir dir="${static.analysis.report.dir}"/>
+    <pmd shortFilenames="true">
+      <ruleset>rulesets/java/design.xml,rulesets/java/comments.xml</ruleset>
+      <ruleset>java-basic</ruleset>
+      <formatter type="xml" toFile="${static.analysis.report}"/>
+      <fileset dir="${source.main.java}"/>
+    </pmd>
+  </target>
+  
+</project>
