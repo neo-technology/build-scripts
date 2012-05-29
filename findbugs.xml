@@ -17,7 +17,7 @@
   
   <target name="findbugs.check.rules" extensionOf="-post-test" if="findbugs.enabled">
     <mkdir dir="${static.analysis.report.dir}"/>
-    <findbugs home="../build/lib/findbugs" output="xml" outputFile="${static.analysis.findbugs.report}" >
+    <findbugs home="../build/lib/findbugs" effort="max" output="xml" outputFile="${static.analysis.findbugs.report}">
       <sourcePath path="${source.main.java}" />
       <auxClasspath refid="main.classpath" />
       <class location="${main.jar}" />
