@@ -132,6 +132,7 @@
       <javac failonerror="false" errorProperty="compilation.failure"
              destdir="${target.tmp}" debug="on" debuglevel="lines,vars,source"
              target="${compilation.target}" includeantruntime="false">
+        <compilerarg value="-Xlint"/>
         <src path="@{source}"/>
         <src path="@{genSource}"/>
         <classpath><class-path/></classpath>
