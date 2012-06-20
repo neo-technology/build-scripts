@@ -62,6 +62,10 @@
     <mkdir dir="${target.dir}"/>
     <!-- define classpaths -->
     <path id="main.classpath"/>
+    <path id="exec.classpath">
+      <path refid="main.classpath"/>
+      <pathelement location="${main.jar}"/>
+    </path>
     <path id="runtime.classpath"><path refid="main.classpath"/></path>
     <path id="test.classpath"/>
     <path id="test.runtime.classpath">
