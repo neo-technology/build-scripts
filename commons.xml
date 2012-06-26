@@ -134,6 +134,7 @@
       <mkdir dir="@{genSource}"/>
 
       <javac failonerror="false" errorProperty="compilation.failure"
+             source="${compilation.target}" encoding="UTF-8"
              destdir="${target.tmp}" debug="on" debuglevel="lines,vars,source"
              target="${compilation.target}" includeantruntime="false">
         <compilerarg value="-Xlint:all"/>
