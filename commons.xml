@@ -36,6 +36,8 @@
     <!-- source directories -->
     <property name="source.main.java" value="src/main/java" />
     <property name="generated.main.java" value="target/generated-sources/java" />
+    <property name="main.resources" value="src/main/resources" />
+    <property name="generated.resources" value="target/generated-resources" />
     <property name="source.test.java" value="src/test/java" />
     <property name="generated.test.java" value="target/generated-test-sources/java" />
     <!-- target directories -->
@@ -220,10 +222,16 @@
   <extension-point name="-pre-build" depends="-post-setup"/>
   
   <target name="build" depends="-pre-build">
+    <mkdir dir="${main.resources}"/>
+    <mkdir dir="${generated.resources}"/>
     <compile jar="${main.jar}" srcjar="${main.src.jar}" source="${source.main.java}" genSource="${generated.main.java}">
       <class-path>
         <path refid="main.classpath"/>
       </class-path>
+      <include-files>
+        <fileset dir="${main.resources}"/>
+        <fileset dir="${generated.resources}"/>
+      </include-files>
     </compile>
   </target>
 
