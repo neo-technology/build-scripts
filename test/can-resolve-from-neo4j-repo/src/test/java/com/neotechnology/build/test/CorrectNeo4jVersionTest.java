@@ -10,6 +10,6 @@ public class CorrectNeo4jVersionTest
     @Test
     public void hasSnapshotVersionOfNeo4j()
     {
-        assertTrue( Neo4jKernelVersion.getVersionString().startsWith( "1.8-RC1" ) );
+        assertTrue( Neo4jKernelVersion.getVersionString().startsWith( "1.8" ) );
     }
 }

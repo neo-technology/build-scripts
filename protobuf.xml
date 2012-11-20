@@ -35,18 +35,19 @@
 
   <macrodef name="protoc">
     <attribute name="source"/>
-    <attribute name="test"/>
+    <attribute name="test-source"/>
     <attribute name="target"/>
 
     <sequential>
       <mkdir dir="@{target}"/>
       <apply executable="protoc" failonerror="yes">
 	<arg value="-I@{source}"/>
+	<arg value="-I@{test-source}"/>
 	<arg value="--java_out=@{target}"/>
 	<fileset dir="@{source}">
 	  <include name="**/*.proto"/>
 	</fileset>
-	<fileset dir="@{test_source}">
+	<fileset dir="@{test-source}">
 	  <include name="**/*.proto"/>
 	</fileset>
       </apply>
@@ -58,7 +59,7 @@
   <target name="proto" extensionOf="-pre-build" depends="-pre-proto"
 	  if="protobuf.has.main.sources">
 	  <mkdir dir="${generated.main.java}"/>
-    <protoc source="${main.proto}" test="${test.proto}" target="${generated.main.java}"/>
+    <protoc source="${main.proto}" test-source="${test.proto}" target="${generated.main.java}"/>
   </target>
 
 </project>
