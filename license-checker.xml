@@ -12,7 +12,7 @@
     </taskdef>
     <check-license>
       <license>
-        <line>Copyright (C) 2012 Neo Technology</line>
+        <line>Copyright (C) 2013 Neo Technology</line>
         <line>All rights reserved</line>
       </license>
       <fileset dir="src" includes="**/*.java"/>
