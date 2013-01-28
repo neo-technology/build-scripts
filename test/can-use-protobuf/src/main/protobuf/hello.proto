@@ -1,5 +1,5 @@
 option java_package = "com.neotechnology.build.test";
 
-message Greeting {
-  required string greetee = 1;
+message JustUsedForTestingThatProtocIsInstalled {
+  required string someMessage = 1;
 }
