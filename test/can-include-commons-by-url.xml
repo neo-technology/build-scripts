@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2013 Neo Technology
+  ~ All rights reserved
+  -->
+
 <project name="can-include-commons-by-url"
-      default="can-include-commons-by-url">
-  <include><url file="../commons.xml"/></include>
+         default="can-include-commons-by-url">
+  <include>
+    <url file="../commons.xml"/>
+  </include>
   <using lib="test/lib/success"/>
   <target name="can-include-commons-by-url" depends="success.success"/>
 </project>

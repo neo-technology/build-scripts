@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2013 Neo Technology
+  ~ All rights reserved
+  -->
+
 <project name="build-scripts" default="complete">
   <target name="help">
     <local name="readme"/>
@@ -13,7 +18,9 @@
   <property name="rebuild.aether" value="true"/>
 
   <target name="clean">
-    <delete><fileset dir="test" includes="*.jar"/></delete>
+    <delete>
+      <fileset dir="test" includes="*.jar"/>
+    </delete>
   </target>
 
   <target name="test" depends="help,clean,-reuse build-libs">
@@ -33,13 +40,13 @@
     <attribute name="prefix"/>
     <sequential>
       <loadproperties>
-	<zipentry zipfile="@{jar}" name="META-INF/MANIFEST.MF"/>
-	<filterchain>
-	  <linecontains>
-	    <contains value="GitHub-Commit-SHA:"/>
-	  </linecontains>
-	  <prefixlines prefix="@{prefix}."/>
-	</filterchain>
+        <zipentry zipfile="@{jar}" name="META-INF/MANIFEST.MF"/>
+        <filterchain>
+          <linecontains>
+            <contains value="GitHub-Commit-SHA:"/>
+          </linecontains>
+          <prefixlines prefix="@{prefix}."/>
+        </filterchain>
       </loadproperties>
     </sequential>
   </macrodef>
@@ -49,12 +56,15 @@
   </target>
 
   <target name="-check new aether" depends="test">
-    <local name="old.GitHub-Commit-SHA"/><local name="new.GitHub-Commit-SHA"/>
+    <local name="old.GitHub-Commit-SHA"/>
+    <local name="new.GitHub-Commit-SHA"/>
     <extract-commit-sha jar="aether.jar" prefix="old"/>
     <extract-commit-sha jar="test/aether.jar" prefix="new"/>
     <condition property="old.aether">
-      <not><equals arg1="${old.GitHub-Commit-SHA}"
-                   arg2="${new.GitHub-Commit-SHA}"/></not>
+      <not>
+        <equals arg1="${old.GitHub-Commit-SHA}"
+                arg2="${new.GitHub-Commit-SHA}"/>
+      </not>
     </condition>
   </target>
 
@@ -63,7 +73,7 @@
   </target>
 
   <target name="-reuse build-libs" depends="-reuse aether"/>
-  
+
   <target name="complete" depends="-replace aether">
     <echo message="done."/>
   </target>

@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013 Neo Technology
+  ~ All rights reserved
+  -->
+
 <project xmlns:aether="antlib:org.sonatype.aether.ant" name="aether">
   <sequential>
     <local name="build"/>
@@ -7,7 +12,7 @@
       <isset property="commons.xml"/>
     </condition>
     <fail unless="aether.jar"
-	  message="Could not find location to put aether.jar"/>
+          message="Could not find location to put aether.jar"/>
   </sequential>
 
   <target name="clean aether">
@@ -29,10 +34,12 @@
   </target>
 
   <target name="-aether build" depends="-aether get" unless="aether.available">
-    <local name="gh.org"/><local name="gh.repo"/>
+    <local name="gh.org"/>
+    <local name="gh.repo"/>
     <property name="gh.org" value="neo-technology"/>
     <property name="gh.repo" value="aether-ant-tasks"/>
-    <local name="commit"/><!-- get the latest commit -->
+    <local name="commit"/>
+    <!-- get the latest commit -->
     <script language="javascript">
       <![CDATA[
       var reader = new java.io.BufferedReader(
@@ -48,7 +55,8 @@
       project.setProperty("commit",eval("("+data+")")[0]["sha"]);
       ]]>
     </script>
-    <local name="build.dir"/><local name="aether.target.dir"/>
+    <local name="build.dir"/>
+    <local name="aether.target.dir"/>
     <dirname property="build.dir" file="${aether.jar}"/>
     <property name="aether.target.dir" location="${build.dir}/tmp-aether-tmp"/>
     <mkdir dir="${aether.target.dir}"/>
@@ -62,7 +70,7 @@
     </pathconvert>
     <local name="mvn.settings.xml"/>
     <property name="mvn.settings.xml"
-	      location="${aether.target.dir}/settings.xml"/>
+              location="${aether.target.dir}/settings.xml"/>
     <echo file="${mvn.settings.xml}"><![CDATA[
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
 	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -86,7 +94,8 @@
     <local name="mvn.res"/>
     <exec executable="mvn" dir="${aether.unpack.dir}" resultproperty="mvn.res"
           failifexecutionfails="no" failonerror="no">
-      <arg value="--settings"/><arg value="${mvn.settings.xml}"/>
+      <arg value="--settings"/>
+      <arg value="${mvn.settings.xml}"/>
       <arg value="clean"/>
       <arg value="package"/>
       <arg value="dependency:copy-dependencies"/>
@@ -94,7 +103,9 @@
     <local name="mvn.fail"/>
     <condition property="mvn.fail">
       <or>
-        <not><isset property="mvn.res"/></not>
+        <not>
+          <isset property="mvn.res"/>
+        </not>
         <isfailure code="${mvn.res}"/>
       </or>
     </condition>
@@ -122,8 +133,8 @@
     <property name="project.version" value="${pom.version}"/>
 
     <aether:remoterepo id="aether.repo.neo4j"
-            url="http://m2.neo4j.org/content/repositories/everything"
-            releases="true" snapshots="true" checksums="fail"/>
+                       url="http://m2.neo4j.org/content/repositories/everything"
+                       releases="true" snapshots="true" checksums="fail"/>
   </target>
 
   <target name="-aether local" if="aether.repo" depends="-aether setup">
@@ -133,11 +144,11 @@
   </target>
 
   <target name="-aether install" if="project.install.target"
-	  depends="-aether setup">
+          depends="-aether setup">
     <local name="local.repo.path"/>
     <property name="local.repo.path" location="${project.install.target}"/>
     <aether:remoterepo id="aether.repo.local" url="file:${local.repo.path}"
-		       releases="true" snapshots="true" checksums="fail"/>
+                       releases="true" snapshots="true" checksums="fail"/>
     <aether:remoterepos id="aether.repos">
       <aether:remoterepo refid="aether.repo.local"/>
       <aether:remoterepo refid="aether.repo.neo4j"/>
@@ -145,14 +156,14 @@
   </target>
 
   <target name="-aether no install" unless="project.install.target"
-	  depends="-aether setup">
+          depends="-aether setup">
     <aether:remoterepos id="aether.repos">
       <aether:remoterepo refid="aether.repo.neo4j"/>
     </aether:remoterepos>
   </target>
 
   <target name="-aether repos"
-   depends="-aether setup,-aether local,-aether install,-aether no install"/>
+          depends="-aether setup,-aether local,-aether install,-aether no install"/>
 
   <target name="-aether dependencies" depends="-aether repos"
           extensionOf="-pre-build">
@@ -170,30 +181,34 @@
       <aether:path refid="transitive.main.classpath" classpath="compile"/>
       <aether:path refid="transitive.test.classpath" classpath="test"/>
     </aether:resolve>
-    <local name="main.ok"/><local name="test.ok"/>
+    <local name="main.ok"/>
+    <local name="test.ok"/>
     <condition property="main.ok">
       <equals arg1="${toString:transitive.main.classpath}"
               arg2="${toString:main.classpath}"/>
     </condition>
     <must-be-equal-paths path1="transitive.main.classpath"
-			 path2="main.classpath"/>
+                         path2="main.classpath"/>
     <must-be-equal-paths path1="transitive.test.classpath"
-			 path2="test.classpath"/>
+                         path2="test.classpath"/>
   </target>
 
   <macrodef name="must-be-equal-paths">
     <attribute name="path1"/>
     <attribute name="path2"/>
     <sequential>
-      <local name="sep"/><local name="ok"/>
-      <local name="one"/><local name="two"/>
+      <local name="sep"/>
+      <local name="ok"/>
+      <local name="one"/>
+      <local name="two"/>
       <property name="sep" value="${line.separator}  "/>
       <pathconvert property="one" pathsep="${sep}" refid="@{path1}"/>
       <pathconvert property="two" pathsep="${sep}" refid="@{path2}"/>
       <condition property="ok">
-	<equals arg1="${one}" arg2="${two}"/>
+        <equals arg1="${one}" arg2="${two}"/>
       </condition>
-      <fail unless="ok" message="Paths do not match${line.separator}= @{path1} =${sep}${one}${line.separator}= @{path2} =${sep}${two}"/>
+      <fail unless="ok"
+            message="Paths do not match${line.separator}= @{path1} =${sep}${one}${line.separator}= @{path2} =${sep}${two}"/>
     </sequential>
   </macrodef>
 
@@ -206,7 +221,7 @@
   </target>
 
   <target name="install" depends="package" if="project.install.target"
-	  extensionOf="complete">
+          extensionOf="complete">
     <mkdir dir="${project.install.target}"/>
     <!--aether:localrepo dir="${project.install.target}"/>
     <aether:install artifactsref="packaging"/-->

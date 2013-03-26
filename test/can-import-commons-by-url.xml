@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2013 Neo Technology
+  ~ All rights reserved
+  -->
+
 <project name="can-import-commons-by-url"
-      default="can-import-commons-by-url">
-  <import><url file="../commons.xml"/></import>
+         default="can-import-commons-by-url">
+  <import>
+    <url file="../commons.xml"/>
+  </import>
   <using lib="test/lib/success"/>
   <target name="can-import-commons-by-url" depends="success.success"/>
 </project>

@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013 Neo Technology
+  ~ All rights reserved
+  -->
+
 <project name="protobuf">
   <property name="protoc.version" value="2.4.1"/>
   <target name="-protobuf available" extensionOf="-pre-setup">
@@ -17,20 +22,21 @@
     <fail unless="protoc" message="ProtoBuf not installed. ${install.it}"/>
     <local name="correct.version"/>
     <condition property="correct.version">
-	  <equals arg1="${protoc}" arg2="libprotoc ${protoc.version}"/>
-	</condition>
-	<fail unless="correct.version" message="Incorrect protoc version. Expected 'libprotoc ${protoc.version}', got '${protoc}'"/>
+      <equals arg1="${protoc}" arg2="libprotoc ${protoc.version}"/>
+    </condition>
+    <fail unless="correct.version"
+          message="Incorrect protoc version. Expected 'libprotoc ${protoc.version}', got '${protoc}'"/>
     <echo message="Using ProtoBuf ${protoc}"/>
 
     <property name="main.proto" location="src/main/protobuf"/>
 
     <available property="protobuf.has.main.sources"
-	       type="dir" file="${main.proto}"/>
-	
-	    <property name="test.proto" location="src/test/protobuf"/>
+               type="dir" file="${main.proto}"/>
 
-	    <available property="protobuf.has.test.sources"
-		       type="dir" file="${test.proto}"/>
+    <property name="test.proto" location="src/test/protobuf"/>
+
+    <available property="protobuf.has.test.sources"
+               type="dir" file="${test.proto}"/>
   </target>
 
   <macrodef name="protoc">
@@ -41,24 +47,24 @@
     <sequential>
       <mkdir dir="@{target}"/>
       <apply executable="protoc" failonerror="yes">
-	<arg value="-I@{source}"/>
-	<arg value="-I@{test-source}"/>
-	<arg value="--java_out=@{target}"/>
-	<fileset dir="@{source}">
-	  <include name="**/*.proto"/>
-	</fileset>
-	<fileset dir="@{test-source}">
-	  <include name="**/*.proto"/>
-	</fileset>
+        <arg value="-I@{source}"/>
+        <arg value="-I@{test-source}"/>
+        <arg value="--java_out=@{target}"/>
+        <fileset dir="@{source}">
+          <include name="**/*.proto"/>
+        </fileset>
+        <fileset dir="@{test-source}">
+          <include name="**/*.proto"/>
+        </fileset>
       </apply>
     </sequential>
   </macrodef>
-  
+
   <extension-point name="-pre-proto" depends="-protobuf available"/>
 
   <target name="proto" extensionOf="-pre-build" depends="-pre-proto"
-	  if="protobuf.has.main.sources">
-	  <mkdir dir="${generated.main.java}"/>
+          if="protobuf.has.main.sources">
+    <mkdir dir="${generated.main.java}"/>
     <protoc source="${main.proto}" test-source="${test.proto}" target="${generated.main.java}"/>
   </target>
 

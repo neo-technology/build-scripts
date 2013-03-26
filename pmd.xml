@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013 Neo Technology
+  ~ All rights reserved
+  -->
+
 <project name="pmd">
 
   <target name="pmd.setup" extensionOf="-post-setup" if="pmd.enabled">
-    <path id="pmd.lib" >
+    <path id="pmd.lib">
       <fileset dir="../build/lib/pmd">
-        <include name="*.jar" />
+        <include name="*.jar"/>
       </fileset>
       <pathelement location="${static.analysis.pmd.rules.dir}"/>
     </path>
 
     <taskdef classpathref="pmd.lib" name="pmd" classname="net.sourceforge.pmd.ant.PMDTask"/>
-    
+
     <property name="static.analysis.report.dir" location="${target.dir}/static-analysis-report"/>
     <property name="static.analysis.pmd.report" location="${static.analysis.report.dir}/pmd-report.xml"/>
   </target>
-  
+
   <target name="pmd.check.rules" extensionOf="-post-test" if="pmd.enabled">
     <mkdir dir="${static.analysis.report.dir}"/>
     <pmd shortFilenames="true" rulesetfiles="${static.analysis.pmd.rules}">
@@ -22,5 +27,5 @@
       <fileset dir="${source.main.java}"/>
     </pmd>
   </target>
-  
+
 </project>

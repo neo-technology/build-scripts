@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2013 Neo Technology
+  ~ All rights reserved
+  -->
+
 <project name="can-use-commons-with-no-cache"
-      default="can-use-commons-with-no-cache">
+         default="can-use-commons-with-no-cache">
   <target name="can-use-commons-with-no-cache">
     <subant inheritall="false" failonerror="true">
       <fileset dir="${basedir}" includes="can-i*.xml"/>

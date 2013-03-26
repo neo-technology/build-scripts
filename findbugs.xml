@@ -1,27 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!--
+  ~ Copyright (C) 2013 Neo Technology
+  ~ All rights reserved
+  -->
+
 <project name="findbugs">
 
   <target name="findbugs.setup" extensionOf="-post-setup" if="findbugs.enabled">
-    <path id="findbugs.lib" >
+    <path id="findbugs.lib">
       <fileset dir="../build/lib/findbugs">
-        <include name="*.jar" />
+        <include name="*.jar"/>
       </fileset>
     </path>
 
     <taskdef classpathref="findbugs.lib" name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
-    
+
     <property name="static.analysis.report.dir" location="${target.dir}/static-analysis-report"/>
     <property name="static.analysis.findbugs.report" location="${static.analysis.report.dir}/findbugs-report.xml"/>
   </target>
-  
+
   <target name="findbugs.check.rules" extensionOf="-post-test" if="findbugs.enabled">
     <mkdir dir="${static.analysis.report.dir}"/>
     <findbugs home="../build/lib/findbugs" effort="max" output="xml" outputFile="${static.analysis.findbugs.report}">
-      <sourcePath path="${source.main.java}" />
-      <auxClasspath refid="main.classpath" />
-      <class location="${main.jar}" />
+      <sourcePath path="${source.main.java}"/>
+      <auxClasspath refid="main.classpath"/>
+      <class location="${main.jar}"/>
     </findbugs>
   </target>
-  
+
 </project>

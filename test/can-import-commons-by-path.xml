@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2013 Neo Technology
+  ~ All rights reserved
+  -->
+
 <project name="can-import-commons-by-path"
-      default="can-import-commons-by-path">
+         default="can-import-commons-by-path">
   <import file="../commons.xml"/>
   <using lib="test/lib/success"/>
   <target name="can-import-commons-by-path" depends="success.success"/>

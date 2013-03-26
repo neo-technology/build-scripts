@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013 Neo Technology
+  ~ All rights reserved
+  -->
+
 <project name="emma">
   <sequential>
     <local name="build"/>
@@ -10,20 +15,20 @@
           message="Could not find location to put emma.jar"/>
     <property name="emma-ant.jar" value="${build}/emma_ant.jar"/>
   </sequential>
-  
+
   <target name="emma.setup" extensionOf="-post-setup">
     <get src="${commons.parent.uri}/lib/emma/emma.jar"
          dest="${emma.jar}" usetimestamp="true" ignoreerrors="true"/>
     <get src="${commons.parent.uri}/lib/emma/emma_ant.jar"
          dest="${emma-ant.jar}" usetimestamp="true" ignoreerrors="true"/>
 
-    <path id="emma.lib" >
-      <pathelement location="${emma.jar}" />
-      <pathelement location="${emma-ant.jar}" />
+    <path id="emma.lib">
+      <pathelement location="${emma.jar}"/>
+      <pathelement location="${emma-ant.jar}"/>
     </path>
 
-    <taskdef resource="emma_ant.properties" classpathref="emma.lib" />
-    
+    <taskdef resource="emma_ant.properties" classpathref="emma.lib"/>
+
     <property name="coverage.dir" location="${target.dir}/coverage"/>
     <property name="coverage.report.dir" location="${target.dir}/coverage-report"/>
     <property name="emma.out.dir" location="${target.dir}/instrumented-classes"/>
@@ -36,7 +41,7 @@
       <pathelement location="${emma.jar}"/>
     </path>
   </target>
-  
+
   <target name="emma.instrument" extensionOf="-pre-test">
     <mkdir dir="${coverage.dir}"/>
     <mkdir dir="${coverage.report.dir}"/>
@@ -57,14 +62,14 @@
     </jar>
     <delete dir="${emma.out.dir}"/>
   </target>
-  
+
   <target name="emma.report" extensionOf="-post-test">
     <emma enabled="true">
       <report sourcepath="${source.main.java}"
               sort="+block,+name,+method,+class"
               metrics="method:70,block:80,line:80,class:100">
-        <fileset dir="${coverage.dir}" >
-          <include name="*.emma" />
+        <fileset dir="${coverage.dir}">
+          <include name="*.emma"/>
         </fileset>
         <html outfile="${coverage.report.dir}/coverage.html"
               encoding="UTF-8"
@@ -73,5 +78,5 @@
       </report>
     </emma>
   </target>
-  
+
 </project>

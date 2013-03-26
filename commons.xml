@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2013 Neo Technology
+  ~ All rights reserved
+  -->
+
 <project name="commons">
   <property name="commons.parent.uri"
             value="https://raw.github.com/neo-technology/build-scripts/master"/>
@@ -34,12 +39,12 @@
     <property name="project.name" value="${ant.project.name}"/>
     <property name="project.version" value="SNAPSHOT"/>
     <!-- source directories -->
-    <property name="source.main.java" value="src/main/java" />
-    <property name="generated.main.java" value="target/generated-sources/java" />
-    <property name="main.resources" value="src/main/resources" />
-    <property name="generated.resources" value="target/generated-resources" />
-    <property name="source.test.java" value="src/test/java" />
-    <property name="generated.test.java" value="target/generated-test-sources/java" />
+    <property name="source.main.java" value="src/main/java"/>
+    <property name="generated.main.java" value="target/generated-sources/java"/>
+    <property name="main.resources" value="src/main/resources"/>
+    <property name="generated.resources" value="target/generated-resources"/>
+    <property name="source.test.java" value="src/test/java"/>
+    <property name="generated.test.java" value="target/generated-test-sources/java"/>
     <!-- target directories -->
     <property name="target.dir" location="target"/>
     <property name="test.reports" location="${target.dir}/test-reports"/>
@@ -57,9 +62,9 @@
     <property name="main.jar" location="${target.dir}/${main.jar.name}"/>
     <property name="test.jar" location="${target.dir}/${test.jar.name}"/>
     <property name="main.src.jar"
-	      location="${target.dir}/${main.src.jar.name}"/>
+              location="${target.dir}/${main.src.jar.name}"/>
     <property name="test.src.jar"
-	      location="${target.dir}/${test.src.jar.name}"/>
+              location="${target.dir}/${test.src.jar.name}"/>
     <!-- create target directories -->
     <mkdir dir="${target.dir}"/>
     <!-- define classpaths -->
@@ -68,7 +73,9 @@
       <path refid="main.classpath"/>
       <pathelement location="${main.jar}"/>
     </path>
-    <path id="runtime.classpath"><path refid="main.classpath"/></path>
+    <path id="runtime.classpath">
+      <path refid="main.classpath"/>
+    </path>
     <path id="test.classpath"/>
     <path id="test.runtime.classpath">
       <path refid="test.classpath"/>
@@ -80,12 +87,14 @@
     <attribute name="lib"/>
 
     <sequential>
-      <local name="cache.root"/><local name="cache.root.suggestion"/>
+      <local name="cache.root"/>
+      <local name="cache.root.suggestion"/>
       <dirname property="cache.root.suggestion" file="${commons.xml}"/>
       <condition property="cache.root" value="${cache.root.suggestion}">
         <isset property="commons.xml"/>
       </condition>
-      <local name="download.uri"/><local name="target.file"/>
+      <local name="download.uri"/>
+      <local name="target.file"/>
       <condition property="download.uri" value="${commons.parent.uri}/@{lib}.xml"
                  else=""><!-- empty to not download -->
         <isset property="cache.root"/>
@@ -102,7 +111,9 @@
                  else="${remote.root}/@{lib}.xml">
         <isset property="cache.root"/>
       </condition>
-      <import><url url="${uri}"/></import>
+      <import>
+        <url url="${uri}"/>
+      </import>
     </sequential>
   </macrodef>
 
@@ -129,7 +140,8 @@
     <element name="include-files" optional="yes"/>
 
     <sequential>
-      <local name="target.tmp"/><local name="compilation.failure"/>
+      <local name="target.tmp"/>
+      <local name="compilation.failure"/>
       <property name="target.tmp" location="@{jar}-classes"/>
       <mkdir dir="${target.tmp}"/>
       <mkdir dir="@{source}"/>
@@ -142,15 +154,19 @@
         <compilerarg value="-Xlint:all"/>
         <src path="@{source}"/>
         <src path="@{genSource}"/>
-        <classpath><class-path/></classpath>
+        <classpath>
+          <class-path/>
+        </classpath>
       </javac>
 
       <jar jarfile="@{jar}">
         <fileset dir="${target.tmp}"/>
         <zipfileset dir="${basedir}" prefix="META-INF/">
           <filename name="README.*"/>
-          <filename name="LICENSE.txt"/><!-- license for this project -->
-          <filename name="NOTICE.txt"/><!-- licenses for dependencies -->
+          <filename name="LICENSE.txt"/>
+          <!-- license for this project -->
+          <filename name="NOTICE.txt"/>
+          <!-- licenses for dependencies -->
         </zipfileset>
         <fileset dir="@{source}" excludes="**/*.java"/>
         <fileset dir="@{genSource}" excludes="**/*.java"/>
@@ -172,9 +188,11 @@
       <jar jarfile="@{srcjar}">
         <zipfileset dir="${basedir}" prefix="META-INF/">
           <filename name="README.*"/>
-          <filename name="LICENSE.txt"/><!-- license for this project -->
-	        <filename name="NOTICE.txt"/><!-- licenses for dependencies -->
-	      </zipfileset>
+          <filename name="LICENSE.txt"/>
+          <!-- license for this project -->
+          <filename name="NOTICE.txt"/>
+          <!-- licenses for dependencies -->
+        </zipfileset>
         <fileset dir="@{source}"/>
         <fileset dir="@{genSource}"/>
       </jar>
@@ -204,7 +222,7 @@
             <exclude name="**/*$*"/>
           </zipfileset>
         </batchtest>
-        
+
         <arguments/>
       </junit>
       <fail message="Test failure" if="failure"/>
@@ -220,7 +238,7 @@
   <extension-point name="-pre-setup" depends="-commons bootstrap"/>
   <!-- setup depends -pre-setup -->
   <extension-point name="-pre-build" depends="-post-setup"/>
-  
+
   <target name="build" depends="-pre-build">
     <mkdir dir="${main.resources}"/>
     <mkdir dir="${generated.resources}"/>
@@ -252,7 +270,7 @@
     <!-- if no instrumented jar specified, use the un-instrumented one -->
     <property name="main.instrumented.jar" value="${main.jar}"/>
     <property name="coverage.test.args" value=""/>
-    
+
     <test jar="${test.jar}">
       <class-path>
         <pathelement location="${main.instrumented.jar}"/>
@@ -265,6 +283,6 @@
   </target>
 
   <extension-point name="-post-test" depends="test"/>
-  
+
   <extension-point name="complete" depends="-post-test"/>
 </project>

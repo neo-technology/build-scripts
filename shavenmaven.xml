@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2013 Neo Technology
+  ~ All rights reserved
+  -->
+
 <project name="shavenmaven"
-	 xmlns:shavenmaven="antlib:com.googlecode.shavenmaven">
+         xmlns:shavenmaven="antlib:com.googlecode.shavenmaven">
   <property name="lib.dir" location="lib"/>
   <property name="shavenmaven.version" value="44"/>
   <sequential>
@@ -21,7 +26,7 @@
 
     <mkdir dir="${lib.dir}"/>
     <get src="http://shavenmaven.googlecode.com/files/shavenmaven-${shavenmaven.version}.jar"
-	 dest="${shavenmaven.jar}" usetimestamp="true"/>
+         dest="${shavenmaven.jar}" usetimestamp="true"/>
   </target>
 
   <macrodef name="update" uri="antlib:com.googlecode.shavenmaven">
@@ -31,16 +36,16 @@
     <sequential>
       <mkdir dir="@{directory}"/>
       <java classname="com.googlecode.shavenmaven.Dependencies"
-	    classpath="${shavenmaven.jar}" fork="true" failonerror="true">
-	<arg value="@{dependencies}"/>
-	<arg value="@{directory}"/>
+            classpath="${shavenmaven.jar}" fork="true" failonerror="true">
+        <arg value="@{dependencies}"/>
+        <arg value="@{directory}"/>
       </java>
     </sequential>
   </macrodef>
 
   <target name="-shavenmaven build dependencies" extensionOf="-pre-build">
     <shavenmaven:update dependencies="${build.dependencies}"
-			directory="${build.lib.dir}"/>
+                        directory="${build.lib.dir}"/>
     <path id="build.classpath">
       <fileset dir="${build.lib.dir}">
         <include name="*.jar"/>
@@ -50,7 +55,7 @@
 
   <target name="-shavenmaven test dependencies" extensionOf="-pre-build-test">
     <shavenmaven:update dependencies="${test.dependencies}"
-			directory="${test.lib.dir}"/>
+                        directory="${test.lib.dir}"/>
     <path id="test.classpath">
       <fileset dir="${test.lib.dir}">
         <include name="*.jar"/>
@@ -60,17 +65,17 @@
 
   <macrodef name="generate.pom" uri="antlib:com.googlecode.shavenmaven">
     <attribute name="artifact.uri"
-     default="mvn:${project.group}:${project.name}:jar:${project.version}"/>
+               default="mvn:${project.group}:${project.name}:jar:${project.version}"/>
     <attribute name="dependencies" default="${runtime.dependencies}"/>
     <attribute name="directory" default="${target.dir}"/>
 
     <sequential>
       <mkdir dir="@{directory}"/>
       <java classname="com.googlecode.shavenmaven.PomGenerator"
-	    classpath="${shavenmaven.jar}" fork="true" failonerror="true">
-	<arg value="@{artifact.uri}"/>
-	<arg value="@{dependencies}"/>
-	<arg value="@{directory}"/>
+            classpath="${shavenmaven.jar}" fork="true" failonerror="true">
+        <arg value="@{artifact.uri}"/>
+        <arg value="@{dependencies}"/>
+        <arg value="@{directory}"/>
       </java>
     </sequential>
   </macrodef>

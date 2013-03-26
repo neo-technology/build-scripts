@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013 Neo Technology
+  ~ All rights reserved
+  -->
+
 <project name="cobertura">
 
   <target name="cobertura.setup" extensionOf="-post-setup" if="cobertura.enabled">
-    <path id="cobertura.lib" >
+    <path id="cobertura.lib">
       <fileset dir="../build/lib/cobertura">
-        <include name="*.jar" />
+        <include name="*.jar"/>
       </fileset>
     </path>
 
     <taskdef classpathref="cobertura.lib" resource="tasks.properties"/>
-    
+
     <property name="coverage.dir" location="${target.dir}/coverage"/>
     <property name="coverage.report.dir" location="${target.dir}/coverage-report"/>
     <property name="cobertura.out.dir" location="${target.dir}/instrumented"/>
@@ -22,7 +27,7 @@
       <path refid="cobertura.lib"/>
     </path>
   </target>
-  
+
   <target name="cobertura.instrument" extensionOf="-pre-test" if="cobertura.enabled">
     <mkdir dir="${cobertura.out.dir}"/>
     <mkdir dir="${coverage.dir}"/>
@@ -31,5 +36,5 @@
       <fileset file="${main.jar}"/>
     </cobertura-instrument>
   </target>
-  
+
 </project>

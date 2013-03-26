@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013 Neo Technology
+  ~ All rights reserved
+  -->
+
 <project name="license-checker">
   <target name="license-checker" extensionOf="-pre-build">
     <typedef name="line" classname="com.neotechnology.build.ant.licensechecker.Line">
-		<classpath path="../build/license-checker-ant-task.jar"/>
-	</typedef>
+      <classpath path="../build/license-checker-ant-task.jar"/>
+    </typedef>
     <typedef name="license" classname="com.neotechnology.build.ant.licensechecker.License">
-		<classpath path="../build/license-checker-ant-task.jar"/>
-	</typedef>
+      <classpath path="../build/license-checker-ant-task.jar"/>
+    </typedef>
     <taskdef name="check-license" classname="com.neotechnology.build.ant.licensechecker.ProjectLicenseHeaderChecker">
-		<classpath path="../build/license-checker-ant-task.jar"/>
+      <classpath path="../build/license-checker-ant-task.jar"/>
     </taskdef>
     <check-license>
       <license>
